@@ -7,6 +7,27 @@
 		<model dir="./resources" path="mmp_panda.urdf" name="mmp_panda" />
 	</robot>
 
+    <!-- YZ_steel -->
+    <static_object name = "YZ_steel">
+        <origin xyz="0.0 0.0 -0.5" rpy="0 0 0" />
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/YZ_steel/YZ_steel.obj" scale="0.2 0.2 0.2"/>
+            </geometry>
+        </collision>
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/YZ_steel/YZ_steel.obj" scale="0.2 0.2 0.2"/>
+            </geometry>
+            <material name="safety_orange">
+                <color rgba="1.0 0.6 0.1 1.0" />
+            </material>
+        </visual>
+
+    </static_object>
+
 	<light name="light1" type="directional">
 		<position xyz="2.0 2.0 2.0" />
 		<lookat xyz="0.0 0.0 0.0" />
@@ -17,7 +38,7 @@
 		<lookat xyz="0.0 0.0 0.0" />
 	</light>
 
-    <static_object name="Floor">
+    <!-- <static_object name="Floor">
         <origin xyz="0.0 0.0 -0.05" rpy="0 0 0" />
         <collision>
             <origin xyz="0.0 0.0 -0.4" rpy="0 0 0" />
@@ -34,7 +55,7 @@
                 <color rgba="1.0 0.6 0.1 1.0" />
             </material>
         </visual>
-    </static_object>
+    </static_object> -->
 
 	<!-- <camera name="camera">
 		<position xyz="1.5 1.5 1.5" />
