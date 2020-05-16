@@ -41,6 +41,11 @@
         <mesh filename="../../../models/mmp_panda/meshes/panda_BaseCombo.obj" />
       </geometry>
     </visual>
+    <collision>
+      <geometry>
+        <mesh filename="../../../models/mmp_panda/meshes/panda_BaseCombo.obj"/>
+      </geometry>
+    </collision> 
   </link>
 
   <!-- PANDA ARM LINKS --> 
@@ -55,11 +60,11 @@
         <mesh filename="../../../models/panda/meshes/visual/link1.obj"/>
       </geometry>
     </visual>
-    <!-- <collision>
+    <collision>
       <geometry>
-        <mesh filename="../../../model/panda/meshes/collision/link1.obj"/>
+        <mesh filename="../../../models/panda/meshes/collision/link1.obj"/>
       </geometry>
-    </collision> -->
+    </collision> 
   </link>
   <link name="link2">
     <inertial>
@@ -72,11 +77,11 @@
         <mesh filename="../../../models/panda/meshes/visual/link2.obj"/>
       </geometry>
     </visual>
-    <!-- <collision>
+    <collision>
       <geometry>
-        <mesh filename="../../../model/panda/meshes/collision/link2.obj"/>
+        <mesh filename="../../../models/panda/meshes/collision/link2.obj"/>
       </geometry>
-    </collision> -->
+    </collision> 
   </link>
   <link name="link3">
     <inertial>
@@ -89,11 +94,11 @@
         <mesh filename="../../../models/panda/meshes/visual/link3.obj"/>
       </geometry>
     </visual>
-    <!-- <collision>
+    <collision>
       <geometry>
-        <mesh filename="../../../model/panda/meshes/collision/link3.obj"/>
+        <mesh filename="../../../models/panda/meshes/collision/link3.obj"/>
       </geometry>
-    </collision> -->
+    </collision> 
   </link>
   <link name="link4">
     <inertial>
@@ -106,10 +111,10 @@
         <mesh filename="../../../models/panda/meshes/visual/link4.obj"/>
       </geometry>
     </visual>
-<!--       <collision>
+    <collision>
       <geometry>
-        <mesh filename="../../../model/panda/meshes/collision/link4.obj"/>
-      </geometry>
+        <mesh filename="../../../models/panda/meshes/collision/link4.obj"/>
+    </geometry>
     </collision> -->
   </link>
   <link name="link5">
@@ -123,11 +128,11 @@
         <mesh filename="../../../models/panda/meshes/visual/link5.obj"/>
       </geometry>
     </visual>
-<!--       <collision>
+  <collision>
       <geometry>
-        <mesh filename="../../../model/panda/meshes/collision/link5.obj"/>
+        <mesh filename="../../../models/panda/meshes/collision/link5.obj"/>
       </geometry>
-    </collision> -->
+    </collision> 
   </link>
   <link name="link6">
     <inertial>
@@ -140,11 +145,11 @@
         <mesh filename="../../../models/panda/meshes/visual/link6.obj"/>
       </geometry>
     </visual>
-    <!-- <collision>
+  <collision>
       <geometry>
-        <mesh filename="../../../model/panda/meshes/collision/link6.obj"/>
+        <mesh filename="../../../models/panda/meshes/collision/link6.obj"/>
       </geometry>
-    </collision> -->
+    </collision> 
   </link>
   <link name="link7">
     <inertial>
@@ -157,13 +162,13 @@
         <mesh filename="../../../models/panda/meshes/visual/link7.obj"/>
       </geometry>
     </visual>
-    <!-- <collision>
+   <collision>
       <geometry>
-        <mesh filename="../../../model/panda/meshes/collision/link7.obj"/>
+        <mesh filename="../../../models/panda/meshes/collision/link7.obj"/>
       </geometry>
-    </collision> -->
+    </collision> 
   </link>
-  <link name="linkTool">
+    <link name="linkTool">
     <inertial>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <mass value="1" />
@@ -174,11 +179,11 @@
         <mesh filename="../../../models/Drill2/Drill2.obj"/>
       </geometry>
     </visual>
-  <!-- collision>
+  <collision>
       <geometry>
         <mesh filename="../../../models/Drill2/Drill2.obj"/>
       </geometry>
-    </collision> -->
+    </collision> 
   </link>
 
 
@@ -274,7 +279,7 @@
       <limit effort="12" lower="-2.8973" upper="2.8973" velocity="2.6100"/>
   </joint>
 
-  <joint name="jointTool" type="fixed">
+   <joint name="jointTool" type="fixed">
       <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.8973" soft_upper_limit="2.8973"/>
       <origin rpy="0 3.14159265359 0" xyz="0 0 0.107"/>
       <parent link="link7"/>
@@ -282,6 +287,5 @@
       <axis xyz="0 0 1"/>
       <limit effort="12" lower="-2.8973" upper="2.8973" velocity="2.6100"/>
   </joint>
-
-
+  
 </robot> 
