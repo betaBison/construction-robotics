@@ -43,7 +43,7 @@
     </visual>
   </link>
 
-  <!-- PANDA ARM LINKS --> 
+  <!-- PANDA ARM LINKS -->
 <!--<link name="link0">
     <inertial>
       <origin xyz="0 0 0.05" rpy="0 0 0" />
@@ -59,7 +59,7 @@
         <geometry>
           <mesh filename="../../../model/panda/meshes/collision/link0.obj"/>
         </geometry>
-      </collision> 
+      </collision>
   </link> -->
   <link name="link1">
     <inertial>
@@ -180,11 +180,28 @@
       </geometry>
     </collision> -->
   </link>
+  <link name="linkTool">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <mass value="1" />
+      <inertia ixx="0" iyy="0" izz="0.003" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../../../model/Drill2/Drill2.obj"/>
+      </geometry>
+    </visual>
+  <!-- collision>
+      <geometry>
+        <mesh filename="../../../model/Drill2/Drill2.obj"/>
+      </geometry>
+    </collision> -->
+  </link>
 
 
   <!-- JOINTS -->
   <joint name = "base_prismatic_x" type = "prismatic">
-    <origin xyz = "0 0 0" rpy = "0 0 0"/> 
+    <origin xyz = "0 0 0" rpy = "0 0 0"/>
     <parent link = "ground_link" />
     <child link= "base_x"/>
     <axis xyz = "1 0 0" />
@@ -192,7 +209,7 @@
   </joint>
 
   <joint name = "base_prismatic_y" type = "prismatic">
-    <origin xyz = "0 0 0" rpy = "0 0 0"/> 
+    <origin xyz = "0 0 0" rpy = "0 0 0"/>
     <parent link = "base_x" />
     <child link= "base_y"/>
     <axis xyz = "0 1 0" />
@@ -200,7 +217,7 @@
   </joint>
 
   <joint name = "base_revolute" type = "revolute">
-    <origin xyz = "0 0 0.0" rpy = "0 0 0"/> 
+    <origin xyz = "0 0 0.0" rpy = "0 0 0"/>
     <parent link = "base_y" />
     <child link= "base_link"/>
     <axis xyz = "0 0 1" />
@@ -208,7 +225,7 @@
   </joint>
 <!--
   <joint name = "base_prismatic_link0" type = "prismatic">
-    <origin xyz = "0 0 0.33" rpy = "0 0 0"/> 
+    <origin xyz = "0 0 0.33" rpy = "0 0 0"/>
     <parent link = "base_link" />
     <child link= "link0"/>
     <axis xyz = "0 0 1" />
@@ -281,6 +298,15 @@
       <axis xyz="0 0 1"/>
       <limit effort="12" lower="-2.8973" upper="2.8973" velocity="2.6100"/>
   </joint>
+
+  <joint name="jointTool" type="fixed">
+      <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.8973" soft_upper_limit="2.8973"/>
+      <origin rpy="0 3.14159265359 0" xyz="0 0 0.107"/>
+      <parent link="link7"/>
+      <child link="linkTool"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="12" lower="-2.8973" upper="2.8973" velocity="2.6100"/>
+  </joint>
 <!--
    <joint name="joint1" type="revolute">
     <origin xyz="0 0 0.48643" rpy="3.1416 2.7629E-18 -3.14" />
@@ -341,5 +367,5 @@
     <limit lower="-10" upper="10" effort="9" velocity="0.8727" />
   </joint>
 -->
-  
-</robot> 
+
+</robot>

@@ -38,12 +38,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/mmp_panda/meshes/panda_BaseCombo.obj" />
+        <mesh filename="../../../model/mmp_panda/meshes/panda_BaseCombo.obj" />
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="../../../models/mmp_panda/meshes/panda_BaseCombo.obj"/>
+        <mesh filename="../../../model/mmp_panda/meshes/panda_BaseCombo.obj"/>
       </geometry>
     </collision> 
   </link>
@@ -57,12 +57,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link1.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link1.obj"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/collision/link1.obj"/>
+        <mesh filename="../../../model/panda/meshes/collision/link1.obj"/>
       </geometry>
     </collision> 
   </link>
@@ -74,12 +74,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link2.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link2.obj"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/collision/link2.obj"/>
+        <mesh filename="../../../model/panda/meshes/collision/link2.obj"/>
       </geometry>
     </collision> 
   </link>
@@ -91,12 +91,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link3.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link3.obj"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/collision/link3.obj"/>
+        <mesh filename="../../../model/panda/meshes/collision/link3.obj"/>
       </geometry>
     </collision> 
   </link>
@@ -108,12 +108,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link4.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link4.obj"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/collision/link4.obj"/>
+        <mesh filename="../../../model/panda/meshes/collision/link4.obj"/>
     </geometry>
     </collision> -->
   </link>
@@ -125,12 +125,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link5.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link5.obj"/>
       </geometry>
     </visual>
   <collision>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/collision/link5.obj"/>
+        <mesh filename="../../../model/panda/meshes/collision/link5.obj"/>
       </geometry>
     </collision> 
   </link>
@@ -142,12 +142,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link6.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link6.obj"/>
       </geometry>
     </visual>
   <collision>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/collision/link6.obj"/>
+        <mesh filename="../../../model/panda/meshes/collision/link6.obj"/>
       </geometry>
     </collision> 
   </link>
@@ -159,12 +159,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link7.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link7.obj"/>
       </geometry>
     </visual>
    <collision>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/collision/link7.obj"/>
+        <mesh filename="../../../model/panda/meshes/collision/link7.obj"/>
       </geometry>
     </collision> 
   </link>
@@ -176,12 +176,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/Drill2/Drill2.obj"/>
+        <mesh filename="../../../model/Drill2/Drill2.obj"/>
       </geometry>
     </visual>
   <collision>
       <geometry>
-        <mesh filename="../../../models/Drill2/Drill2.obj"/>
+        <mesh filename="../../../model/Drill2/Drill2.obj"/>
       </geometry>
     </collision> 
   </link>
