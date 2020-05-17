@@ -4,20 +4,20 @@ if [ ! "$BASH_VERSION" ] ; then
 fi
 
 # launch simulation first
-./simviz04 &
+./simviz &
 SIMVIZ_PID=$!
 
 # trap ctrl-c and call ctrl_c()
 trap ctrl_c INT
 
 function ctrl_c() {
-    kill -2 $SIMVIZ_PID  
+    kill -2 $SIMVIZ_PID
 }
 
-sleep 2 
+sleep 2
 
 # launch controller
-./controller04 &
+./controller &
 CONTROLLER_PID=$!
 
 sleep 1

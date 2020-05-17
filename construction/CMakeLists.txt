@@ -22,3 +22,5 @@ FILE(COPY mmp_panda.urdf DESTINATION ${APP_RESOURCE_DIR})
 FILE(COPY world.urdf DESTINATION ${APP_RESOURCE_DIR})
 FILE(COPY mmp_panda_tool_no_collision.urdf DESTINATION ${APP_RESOURCE_DIR})
 FILE(COPY mmp_panda_tool_collision.urdf DESTINATION ${APP_RESOURCE_DIR})
+# copy launch script
+FILE(COPY launch.sh DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
