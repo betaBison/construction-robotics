@@ -79,4 +79,4 @@ set (CS225A_BINARY_DIR ${PROJECT_SOURCE_DIR}/bin)
 
 add_subdirectory(project_starter_code)
 add_subdirectory(construction)
-add_subdirectory(04-mmp_panda)
+add_subdirectory(gui-construction)

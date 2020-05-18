@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES (controller ${CS225A_COMMON_LIBRARIES} ${SAI2-PRIMITIVES_L
 TARGET_LINK_LIBRARIES (simulation ${CS225A_COMMON_LIBRARIES} ${SAI2-PRIMITIVES_LIBRARIES})
 
 # copy example interface to output
-FILE(COPY 04-mmp_panda.html DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+FILE(COPY gui-construction.html DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # export resources such as model files.
 # NOTE: this requires an install build

@@ -23,7 +23,7 @@ CONTROLLER_PID=$!
 sleep 1
 
 # launch interfaces server
-python3 interface/server.py ../construction/04-mmp_panda.html &
+python3 interface/server.py ../construction/gui-construction.html &
 SERVER_PID=$!
 
 # wait for simviz to quit

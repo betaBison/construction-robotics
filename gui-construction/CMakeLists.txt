@@ -1,5 +1,5 @@
 # create an executable
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CS225A_BINARY_DIR}/04-mmp_panda)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CS225A_BINARY_DIR}/gui-construction)
 ADD_EXECUTABLE (controller04 controller.cpp)
 ADD_EXECUTABLE (simviz04 simviz.cpp)
 
@@ -8,7 +8,7 @@ TARGET_LINK_LIBRARIES (controller04 ${CS225A_COMMON_LIBRARIES})
 TARGET_LINK_LIBRARIES (simviz04 ${CS225A_COMMON_LIBRARIES})
 
 # copy example interface to output
-# FILE(COPY 04-mmp_panda.html DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+# FILE(COPY gui-construction.html DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # export resources such as model files.
 # NOTE: this requires an install build
