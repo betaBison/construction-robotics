@@ -9,28 +9,28 @@
 
     <!-- YZ_steel -->
     <static_object name = "YZ_steel">
-        <origin xyz="0.0 0.0 -0.5" rpy="0 0 0" />
+        <origin xyz="0.0 0.0 0" rpy="0 0 0" />
         <collision>
-            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
             <geometry>
-                <mesh filename="./resources/YZ_steel/YZ_steel.obj" scale="0.2 0.2 0.2"/>
+                <mesh filename="./resources/YZ_steel/YZ_steel.obj" scale="1.0 1.0 1.0"/>
             </geometry>
         </collision>
         <visual>
-            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
             <geometry>
-                <mesh filename="./resources/YZ_steel/YZ_steel.obj" scale="0.2 0.2 0.2"/>
+                <mesh filename="./resources/YZ_steel/YZ_steel.obj" scale="1.0 1.0 1.0"/>
             </geometry>
-            <material name="safety_orange">
+            <!--<material name="safety_orange">
                 <color rgba="1.0 0.6 0.1 1.0" />
-            </material>
+            </material> -->
         </visual>
 
     </static_object>
 
 	<light name="light1" type="directional">
-		<position xyz="2.0 2.0 2.0" />
-		<lookat xyz="0.0 0.0 0.0" />
+		<position xyz="2.0 2.0 5.0" />
+		<lookat xyz="1.0 1.0 1.0" />
 	</light>
 
 	<light name="light2" type="directional">
@@ -38,7 +38,7 @@
 		<lookat xyz="0.0 0.0 0.0" />
 	</light>
 
-    <!-- <static_object name="Floor">
+    <!--<static_object name="Floor">
         <origin xyz="0.0 0.0 -0.05" rpy="0 0 0" />
         <collision>
             <origin xyz="0.0 0.0 -0.4" rpy="0 0 0" />
@@ -57,16 +57,16 @@
         </visual>
     </static_object> -->
 
-	<!-- <camera name="camera">
+	<camera name="camera">
 		<position xyz="1.5 1.5 1.5" />
 		<vertical xyz="0.0 0.0 1.0" />
 		<lookat xyz="0.0 0.0 0.5" />
-	</camera> -->
+	</camera>
 
-	<camera name="camera">
+	<!--<camera name="camera">
 		<position xyz="2.0 -0.8 1.0" />
 		<vertical xyz="0.0 0.0 1.0" />
 		<lookat xyz="0.0 0.0 0.5" />
-	</camera>
+	</camera> -->
 
 </world>

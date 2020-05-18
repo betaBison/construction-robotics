@@ -46,7 +46,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/mmp_panda_tall/meshes/panda_TallBaseCombo.obj" />
+        <mesh filename="../../../model/mmp_panda_tall/meshes/panda_TallBaseCombo.obj" />
       </geometry>
     </visual>
   </link>
@@ -60,7 +60,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link1.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link1.obj"/>
       </geometry>
     </visual>
     <!-- <collision>
@@ -77,7 +77,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link2.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link2.obj"/>
       </geometry>
     </visual>
     <!-- <collision>
@@ -94,7 +94,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link3.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link3.obj"/>
       </geometry>
     </visual>
     <!-- <collision>
@@ -111,7 +111,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link4.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link4.obj"/>
       </geometry>
     </visual>
 <!--       <collision>
@@ -128,7 +128,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link5.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link5.obj"/>
       </geometry>
     </visual>
 <!--       <collision>
@@ -145,7 +145,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link6.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link6.obj"/>
       </geometry>
     </visual>
     <!-- <collision>
@@ -162,7 +162,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/panda/meshes/visual/link7.obj"/>
+        <mesh filename="../../../model/panda/meshes/visual/link7.obj"/>
       </geometry>
     </visual>
     <!-- <collision>
@@ -179,7 +179,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/Drill2/Drill2.obj"/>
+        <mesh filename="../../../model/Drill2/Drill2.obj"/>
       </geometry>
     </visual>
   <!-- collision>

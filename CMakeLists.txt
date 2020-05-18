@@ -1,8 +1,7 @@
 cmake_minimum_required (VERSION 2.8.12)
-project (SAI2-EXAMPLES)
-SET(CMAKE_CXX_FLAGS "-std=c++14 -I/usr/include -I/usr/local/include")
-#SET(CMAKE_BUILD_TYPE "Release")
-SET(CMAKE_BUILD_TYPE "Debug")
+project (construction-robotics)
+SET(CMAKE_CXX_FLAGS "-std=c++11 -I/usr/include -I/usr/local/include")
+SET(CMAKE_BUILD_TYPE "Release")
 
 # set common dependencies
 # - eigen3
@@ -68,15 +67,16 @@ find_library(GLFW_LIBRARY glfw)
 find_library(HIREDIS_LIBRARY hiredis)
 
 
-set(SAI2-EXAMPLES_COMMON_LIBRARIES
+set(CS225A_COMMON_LIBRARIES
 	${CHAI3D_LIBARIES}
 	${SAI2-COMMON_LIBRARIES}
-	${SAI2-PRIMITIVES_LIBRARIES}
+    ${SAI2-PRIMITIVES_LIBRARIES}
 	${HIREDIS_LIBRARY}
 	${GLFW_LIBRARY}
 	)
 
-# add apps
-set (SAI2-EXAMPLES_BINARY_DIR ${PROJECT_SOURCE_DIR}/bin)
+set (CS225A_BINARY_DIR ${PROJECT_SOURCE_DIR}/bin)
 
+add_subdirectory(project_starter_code)
+add_subdirectory(construction)
 add_subdirectory(04-mmp_panda)
