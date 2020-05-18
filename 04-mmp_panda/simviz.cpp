@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -94,7 +95,7 @@ int main(int argc, char **argv)
 	glfwSetKeyCallback(window, keySelect);
 	glfwSetMouseButtonCallback(window, mouseClick);
 
-	// init click force widget 
+	// init click force widget
 	auto ui_force_widget = new UIForceWidget(robot_name, robot, graphics);
 	ui_force_widget->setEnable(false);
 
