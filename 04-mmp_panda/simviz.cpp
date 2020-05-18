@@ -15,14 +15,14 @@
 
 #include <GLFW/glfw3.h> //must be loaded after loading opengl/glew as part of graphicsinterface
 
-#include "keys.h"
+#include "../construction/keys.h"
 
 using namespace Eigen;
 
 // redis keys
 constexpr const char *world_file = "resources/world.urdf";
 constexpr const char *robot_name = "mmp_panda";
-constexpr const char *camera_name = "camera";
+constexpr const char *camera_name = "camera_fixed";
 constexpr const char *SIM_TITLE = "SAI2.0 Example - Mobile Panda";
 
 RedisClient redis_client;
@@ -34,7 +34,7 @@ void sighandler(int)
 }
 
 // simulation and control loop
-void simulation(Sai2Model::Sai2Model *robot, Simulation::Sai2Simulation *sim, 
+void simulation(Sai2Model::Sai2Model *robot, Simulation::Sai2Simulation *sim,
 				UIForceWidget *ui_force_widget);
 
 // initialize window manager

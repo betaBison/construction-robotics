@@ -11,7 +11,7 @@
 #include "tasks/PosOriTask.h"
 #include "tasks/JointTask.h"
 
-#include "keys.h"
+#include "../construction/keys.h"
 
 using namespace Eigen;
 
@@ -76,7 +76,7 @@ void init_joint_task(Sai2Primitives::JointTask *joint_task, RedisClient& redis_c
     joint_task->_otg->setMaxVelocity(joint_interpolation_max_velocity);
     joint_task->_otg->setMaxAcceleration(joint_interpolation_max_acceleration);
     joint_task->_otg->setMaxJerk(joint_interpolation_max_jerk);
-    
+
     // update values when we read all parameters on a new controller cycle
     redis_client.addDoubleToReadCallback(READ_CALLBACK_ID, KP_JOINT_KEY, joint_task->_kp);
     redis_client.addDoubleToReadCallback(READ_CALLBACK_ID, KV_JOINT_KEY, joint_task->_kv);
@@ -152,7 +152,7 @@ void update_joint_task(Sai2Primitives::JointTask *joint_task)
     else if (joint_dynamic_decoupling_mode == "inertia_saturation")
         joint_task->setDynamicDecouplingInertiaSaturation();
     else if (joint_dynamic_decoupling_mode == "none")
-        joint_task->setDynamicDecouplingNone();   
+        joint_task->setDynamicDecouplingNone();
 }
 
 ////////////////// POSORI TASK VARIABLES //////////////////
@@ -214,9 +214,9 @@ void init_posori_task(Sai2Primitives::PosOriTask *posori_task, RedisClient& redi
     posori_task->_kv_ori = 12.0;
     posori_task->_ki_ori = 0.0;
     posori_task->setNonIsotropicGainsPosition(
-        Matrix3d::Identity(), 
+        Matrix3d::Identity(),
         posori_kp_nonisotropic,
-        posori_kv_nonisotropic, 
+        posori_kv_nonisotropic,
         posori_ki_nonisotropic
     );
     posori_task->_use_isotropic_gains_position = bool(posori_use_isotropic_gains);
@@ -251,7 +251,7 @@ void init_posori_task(Sai2Primitives::PosOriTask *posori_task, RedisClient& redi
     redis_client.addEigenToReadCallback(READ_CALLBACK_ID, KI_NONISOTROPIC_POS_KEY, posori_ki_nonisotropic);
     redis_client.addIntToReadCallback(READ_CALLBACK_ID, USE_ISOTROPIC_POS_GAINS_KEY, posori_use_isotropic_gains);
     redis_client.addStringToReadCallback(READ_CALLBACK_ID, DYN_DEC_POSORI_KEY, posori_dynamic_decoupling_mode);
-    redis_client.addEigenToReadCallback(READ_CALLBACK_ID, DESIRED_POS_KEY, posori_task->_desired_position); 
+    redis_client.addEigenToReadCallback(READ_CALLBACK_ID, DESIRED_POS_KEY, posori_task->_desired_position);
     redis_client.addEigenToReadCallback(READ_CALLBACK_ID, DESIRED_ORI_KEY, posori_euler_angles);
     redis_client.addEigenToReadCallback(READ_CALLBACK_ID, DESIRED_VEL_KEY, posori_task->_desired_velocity);
 
@@ -276,7 +276,7 @@ void init_posori_task(Sai2Primitives::PosOriTask *posori_task, RedisClient& redi
     redis_client.addEigenToWriteCallback(INIT_WRITE_CALLBACK_ID, KI_NONISOTROPIC_POS_KEY, posori_ki_nonisotropic);
     redis_client.addIntToWriteCallback(INIT_WRITE_CALLBACK_ID, USE_ISOTROPIC_POS_GAINS_KEY, posori_use_isotropic_gains);
     redis_client.addStringToWriteCallback(INIT_WRITE_CALLBACK_ID, DYN_DEC_POSORI_KEY, posori_dynamic_decoupling_mode);
-    redis_client.addEigenToWriteCallback(INIT_WRITE_CALLBACK_ID, DESIRED_POS_KEY, posori_task->_desired_position); 
+    redis_client.addEigenToWriteCallback(INIT_WRITE_CALLBACK_ID, DESIRED_POS_KEY, posori_task->_desired_position);
     redis_client.addEigenToWriteCallback(INIT_WRITE_CALLBACK_ID, DESIRED_ORI_KEY, posori_euler_angles);
     redis_client.addEigenToWriteCallback(INIT_WRITE_CALLBACK_ID, DESIRED_VEL_KEY, posori_task->_desired_velocity);
 }
@@ -296,7 +296,7 @@ void update_posori_task(Sai2Primitives::PosOriTask *posori_task)
         posori_ki_nonisotropic = posori_task->_ki_pos * Vector3d::Ones();
 
         posori_task->setNonIsotropicGainsPosition(
-            Matrix3d::Identity(), 
+            Matrix3d::Identity(),
             posori_kp_nonisotropic,
             posori_kv_nonisotropic,
             posori_ki_nonisotropic
@@ -349,14 +349,14 @@ void update_posori_task(Sai2Primitives::PosOriTask *posori_task)
         posori_task->setDynamicDecouplingNone();
 }
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     // open redis
     redis_client.connect();
 
     redis_client.createReadCallback(READ_CALLBACK_ID);
     redis_client.createWriteCallback(INIT_WRITE_CALLBACK_ID);
-    
+
     // set up signal handlers
     signal(SIGABRT, &sighandler);
     signal(SIGTERM, &sighandler);
@@ -419,8 +419,8 @@ int main(int argc, char **argv)
     unsigned long long controller_counter = 0;
 
     runloop = true;
-    while (runloop) 
-    { 
+    while (runloop)
+    {
         fTimerDidSleep = timer.waitForNextLoop();
 
         // update time
@@ -457,7 +457,7 @@ int main(int argc, char **argv)
             {
                 joint_task->_current_position = robot->_q;
                 joint_task->reInitializeTask();
-                redis_client.setEigenMatrixJSON(DESIRED_JOINT_POS_KEY, robot->_q); 
+                redis_client.setEigenMatrixJSON(DESIRED_JOINT_POS_KEY, robot->_q);
             }
             else if (currentPrimitive == PRIMITIVE_POSORI_TASK || currentPrimitive == PRIMITIVE_TRAJECTORY_TASK)
             {
@@ -472,7 +472,7 @@ int main(int argc, char **argv)
             {
                 nav_task->_current_position = robot->_q;
                 nav_task->reInitializeTask();
-                redis_client.setEigenMatrixJSON(DESIRED_JOINT_POS_KEY, robot->_q); 
+                redis_client.setEigenMatrixJSON(DESIRED_JOINT_POS_KEY, robot->_q);
             }
         }
 
@@ -491,7 +491,7 @@ int main(int argc, char **argv)
             joint_task->updateTaskModel(N_prec);
 
 #ifdef USING_OTG
-            // disable OTG for trajectory task 
+            // disable OTG for trajectory task
             if (currentPrimitive == PRIMITIVE_TRAJECTORY_TASK)
                 redis_client.set(POSORI_USE_INTERPOLATION, "0");
 #endif
@@ -513,7 +513,7 @@ int main(int argc, char **argv)
         {
             command_torques.setZero(dof);
         }
-    
+
         // -------------------------------------------
         redis_client.setEigenMatrixJSON(JOINT_TORQUES_COMMANDED_KEY, command_torques);
 
@@ -528,7 +528,7 @@ int main(int argc, char **argv)
         redis_client.setEigenMatrixJSON(CURRENT_EE_VEL_KEY, current_vel);
 
         // TODO: log body position and velocity to redis
-        
+
         // -------------------------------------------
         if (controller_counter % 500 == 0)
         {
