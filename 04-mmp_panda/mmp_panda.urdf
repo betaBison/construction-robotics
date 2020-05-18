@@ -29,6 +29,14 @@
     </inertial>
   </link>
 
+  <link name = "base_z">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <mass value = "0.001" />
+      <inertia ixx="1E-06" ixy="0.0" ixz="0.0" iyy="1E-06" iyz="0.0" izz="1E-06" />
+    </inertial>
+  </link>
+
   <!-- MOBILE BASE + LINK 0 OF PANDA ARM -->
   <link name = "base_link">
     <inertial>
@@ -38,7 +46,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../models/mmp_panda/meshes/panda_BaseCombo.obj" />
+        <mesh filename="../../../models/mmp_panda_tall/meshes/panda_TallBaseCombo.obj" />
       </geometry>
     </visual>
   </link>
@@ -199,9 +207,17 @@
     <limit effort="87" lower="-2.8973" upper="2.9873" velocity="2.1750" />
   </joint>
 
+  <joint name = "base_prismatic_z" type = "prismatic">
+    <origin xyz = "0 0 0" rpy = "0 0 0"/> 
+    <parent link = "base_y" />
+    <child link= "base_z"/>
+    <axis xyz = "0 0 1" />
+    <limit effort="87" lower="-2.8973" upper="2.9873" velocity="2.1750" />
+  </joint>
+
   <joint name = "base_revolute" type = "revolute">
     <origin xyz = "0 0 0.0" rpy = "0 0 0"/> 
-    <parent link = "base_y" />
+    <parent link = "base_z" />
     <child link= "base_link"/>
     <axis xyz = "0 0 1" />
     <limit effort="87" lower="-2.8973" upper="2.8973" velocity="2.1750" />
