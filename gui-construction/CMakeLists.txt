@@ -1,11 +1,11 @@
 # create an executable
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CS225A_BINARY_DIR}/gui-construction)
-ADD_EXECUTABLE (controller04 controller.cpp)
-ADD_EXECUTABLE (simviz04 simviz.cpp)
+ADD_EXECUTABLE (controller_gui controller_gui.cpp)
+ADD_EXECUTABLE (simviz_gui simviz_gui.cpp)
 
 # and link the library against the executable
-TARGET_LINK_LIBRARIES (controller04 ${CS225A_COMMON_LIBRARIES})
-TARGET_LINK_LIBRARIES (simviz04 ${CS225A_COMMON_LIBRARIES})
+TARGET_LINK_LIBRARIES (controller_gui ${CS225A_COMMON_LIBRARIES})
+TARGET_LINK_LIBRARIES (simviz_gui ${CS225A_COMMON_LIBRARIES})
 
 # copy example interface to output
 # FILE(COPY gui-construction.html DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -23,4 +23,4 @@ FILE(COPY ../construction/world.urdf DESTINATION ${APP_RESOURCE_DIR})
 FILE(COPY ${SAI2-INTERFACES_UI_DIR} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # copy launch script
-FILE(COPY launch.sh DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+FILE(COPY launch_gui.sh DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
