@@ -22,8 +22,16 @@ const string robot_file = "./resources/mmp_panda.urdf";
 
 #define JOINT_CONTROLLER      0
 #define POSORI_CONTROLLER     1
+#define BASE_NAV              2
+#define BASE_ELEV             3
+#define A_SIDE_BOTTTOM        4
+#define A_SIDE_TOP            5
+#define B_SIDE_BOTTOM         6
+#define B_SIDE_TOP            7
 
-int state = JOINT_CONTROLLER;
+int control_type = JOINT_CONTROLLER;
+int state = BASE_NAV;
+
 
 // redis keys:
 // - read:
@@ -69,15 +77,15 @@ int main() {
 	MatrixXd N_prec = MatrixXd::Identity(dof, dof);
 
 	// pose task
-	const string control_link = "link7";
-	const Vector3d control_point = Vector3d(0,0,0.07);
+	const string control_link = "linkTool";
+	const Vector3d control_point = Vector3d(0.203,0,0.104);
 	auto posori_task = new Sai2Primitives::PosOriTask(robot, control_link, control_point);
 
-#ifdef USING_OTG
-	posori_task->_use_interpolation_flag = true;
-#else
-	posori_task->_use_velocity_saturation_flag = true;
-#endif
+	#ifdef USING_OTG
+		posori_task->_use_interpolation_flag = true;
+	#else
+		posori_task->_use_velocity_saturation_flag = true;
+	#endif
 	
 	VectorXd posori_task_torques = VectorXd::Zero(dof);
 	posori_task->_kp_pos = 200.0;
@@ -88,19 +96,19 @@ int main() {
 	// joint task
 	auto joint_task = new Sai2Primitives::JointTask(robot);
 
-#ifdef USING_OTG
-	joint_task->_use_interpolation_flag = true;
-#else
-	joint_task->_use_velocity_saturation_flag = true;
-#endif
+	#ifdef USING_OTG
+		joint_task->_use_interpolation_flag = true;
+	#else
+		joint_task->_use_velocity_saturation_flag = true;
+	#endif
 
 	VectorXd joint_task_torques = VectorXd::Zero(dof);
 	joint_task->_kp = 250.0;
 	joint_task->_kv = 15.0;
 
 	VectorXd q_init_desired = initial_q;
-	q_init_desired << -30.0, -15.0, -15.0, -105.0, 0.0, 90.0, 45.0;
-	q_init_desired *= M_PI/180.0;
+	q_init_desired << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0; //-30.0, -15.0, -15.0, -105.0, 0.0, 90.0, 45.0;
+	//q_init_desired *= M_PI/180.0;
 	joint_task->_desired_position = q_init_desired;
 
 	// create a timer
@@ -121,8 +129,32 @@ int main() {
 
 		// update model
 		robot->updateModel();
+
+		if(state == BASE_NAV){
+
+		}
+
+		else if(state == BASE_ELEV){
+
+		}
+
+		else if(state == A_SIDE_BOTTTOM){
+
+		}
+
+		else if(state == A_SIDE_TOP){
+
+		}
+
+		else if(state == B_SIDE_BOTTOM){
+
+		}
+
+		else if(state == B_SIDE_TOP){
+
+		}
 	
-		if(state == JOINT_CONTROLLER)
+		if(control_type == JOINT_CONTROLLER)
 		{
 			// update task model and set hierarchy
 			N_prec.setIdentity();
@@ -142,11 +174,11 @@ int main() {
 				joint_task->reInitializeTask();
 				joint_task->_kp = 0;
 
-				state = POSORI_CONTROLLER;
+				control_type = POSORI_CONTROLLER;
 			}
 		}
 
-		else if(state == POSORI_CONTROLLER)
+		else if(control_type == POSORI_CONTROLLER)
 		{
 			// update task model and set hierarchy
 			N_prec.setIdentity();
