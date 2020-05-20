@@ -1,10 +1,4 @@
 #include <GL/glew.h>
-#include <iostream>
-#include <string>
-#include <thread>
-#include <cmath>
-#include <csignal>
-
 #include "Sai2Model.h"
 #include "Sai2Graphics.h"
 #include "Sai2Simulation.h"
@@ -14,8 +8,15 @@
 #include "timer/LoopTimer.h"
 
 #include <GLFW/glfw3.h> //must be loaded after loading opengl/glew as part of graphicsinterface
+#include "uiforce/UIForceWidget.h"
+#include <iostream>
+#include <string>
+#include <thread>
+#include <cmath>
+#include <csignal>
+#include <signal.h>
 
-#include "../construction/keys.h"
+#include "keys_gui.h"
 
 using namespace Eigen;
 
@@ -37,11 +38,16 @@ void sighandler(int)
 void simulation(Sai2Model::Sai2Model *robot, Simulation::Sai2Simulation *sim,
 				UIForceWidget *ui_force_widget);
 
+// callback to print glfw errors
+void glfwError(int error, const char *description);
+
+// callback to print glew errors
+bool glewInitialize();
+
 // initialize window manager
 GLFWwindow *glfwInitialize();
 
-// callback to print glfw errors
-void glfwError(int error, const char *description);
+
 
 // callback when a key is pressed
 void keySelect(GLFWwindow *window, int key, int scancode, int action, int mods);
@@ -98,6 +104,9 @@ int main(int argc, char **argv)
 	// init click force widget
 	auto ui_force_widget = new UIForceWidget(robot_name, robot, graphics);
 	ui_force_widget->setEnable(false);
+
+    // initialize glew
+	glewInitialize();
 
 	// start the simulation thread first
 	fSimulationRunning = true;
@@ -316,6 +325,22 @@ void glfwError(int error, const char *description)
 {
 	std::cerr << "GLFW Error: " << description << std::endl;
 	exit(1);
+}
+
+//------------------------------------------------------------------------------
+
+bool glewInitialize() {
+	bool ret = false;
+	#ifdef GLEW_VERSION
+	if (glewInit() != GLEW_OK) {
+		cout << "Failed to initialize GLEW library" << endl;
+		cout << glewGetErrorString(ret) << endl;
+		glfwTerminate();
+	} else {
+		ret = true;
+	}
+	#endif
+	return ret;
 }
 
 //------------------------------------------------------------------------------

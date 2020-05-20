@@ -11,7 +11,7 @@
 #include "tasks/PosOriTask.h"
 #include "tasks/JointTask.h"
 
-#include "../construction/keys.h"
+#include "keys_gui.h"
 
 using namespace Eigen;
 

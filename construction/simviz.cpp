@@ -124,7 +124,7 @@ int main() {
 	glfwSetKeyCallback(window, keySelect);
 	glfwSetMouseButtonCallback(window, mouseClick);
 
-	// init click force widget 
+	// init click force widget
 	auto ui_force_widget = new UIForceWidget("mmp_panda", robot, graphics);
 	ui_force_widget->setEnable(false);
 
@@ -136,7 +136,7 @@ int main() {
 
 	fSimulationRunning = true;
 	thread sim_thread(simulation, robot, sim, ui_force_widget);
-	
+
 	// while window is open:
 	while (!glfwWindowShouldClose(window) && fSimulationRunning)
 	{
@@ -194,7 +194,7 @@ int main() {
 		if (fTransZp) {
 			camera_pos = camera_pos + 0.1*cam_depth_axis;
 			camera_lookat = camera_lookat + 0.1*cam_depth_axis;
-		}	    
+		}
 		if (fTransZn) {
 			camera_pos = camera_pos - 0.1*cam_depth_axis;
 			camera_lookat = camera_lookat - 0.1*cam_depth_axis;
@@ -266,7 +266,7 @@ void simulation(Sai2Model::Sai2Model* robot, Simulation::Sai2Simulation* sim, UI
 	// create a timer
 	LoopTimer timer;
 	timer.initializeTimer();
-	timer.setLoopFrequency(1000); 
+	timer.setLoopFrequency(1000);
 	double last_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
@@ -287,7 +287,7 @@ void simulation(Sai2Model::Sai2Model* robot, Simulation::Sai2Simulation* sim, UI
 
 		// read arm torques from redis and apply to simulated robot
 		command_torques = redis_client.getEigenMatrixJSON(JOINT_TORQUES_COMMANDED_KEY);
-		
+
 		ui_force_widget->getUIForce(ui_force);
 		ui_force_widget->getUIJointTorques(ui_force_command_torques);
 
@@ -298,7 +298,7 @@ void simulation(Sai2Model::Sai2Model* robot, Simulation::Sai2Simulation* sim, UI
 
 		// integrate forward
 		double curr_time = timer.elapsedTime();
-		double loop_dt = curr_time - last_time; 
+		double loop_dt = curr_time - last_time;
 		sim->integrate(loop_dt);
 
 		// read joint positions, velocities, update model
@@ -406,4 +406,3 @@ void mouseClick(GLFWwindow* window, int button, int action, int mods) {
 			break;
 	}
 }
-
