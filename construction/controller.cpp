@@ -107,7 +107,8 @@ int main() {
 	joint_task->_kv = 15.0;
 
 	VectorXd q_init_desired = initial_q;
-	q_init_desired << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0; //-30.0, -15.0, -15.0, -105.0, 0.0, 90.0, 45.0;
+	q_init_desired << 0.41, 1.76, 1.12, -.07, -.13, .14, .49, 5.6, 1.36, 2, 7.27; //0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	// 0.41, 1.76, 1.12, -.07, -.13, .14, .49, 5.6, 1.36, 2, 7.27
 	//q_init_desired *= M_PI/180.0;
 	joint_task->_desired_position = q_init_desired;
 
@@ -130,29 +131,29 @@ int main() {
 		// update model
 		robot->updateModel();
 
-		if(state == BASE_NAV){
+		// if(state == BASE_NAV){
 
-		}
+		// }
 
-		else if(state == BASE_ELEV){
+		// else if(state == BASE_ELEV){
 
-		}
+		// }
 
-		else if(state == A_SIDE_BOTTTOM){
+		// else if(state == A_SIDE_BOTTTOM){
 
-		}
+		// }
 
-		else if(state == A_SIDE_TOP){
+		// else if(state == A_SIDE_TOP){
 
-		}
+		// }
 
-		else if(state == B_SIDE_BOTTOM){
+		// else if(state == B_SIDE_BOTTOM){
 
-		}
+		// }
 
-		else if(state == B_SIDE_TOP){
+		// else if(state == B_SIDE_TOP){
 
-		}
+		// }
 	
 		if(control_type == JOINT_CONTROLLER)
 		{
@@ -168,7 +169,7 @@ int main() {
 			if( (robot->_q - q_init_desired).norm() < 0.15 )
 			{
 				posori_task->reInitializeTask();
-				posori_task->_desired_position += Vector3d(-0.1,0.1,0.1);
+				posori_task->_desired_position = Vector3d(0,2.18,2.28); //posori_task->_desired_position += Vector3d(0,2.18,2.28)
 				posori_task->_desired_orientation = AngleAxisd(M_PI/6, Vector3d::UnitX()).toRotationMatrix() * posori_task->_desired_orientation;
 
 				joint_task->reInitializeTask();
