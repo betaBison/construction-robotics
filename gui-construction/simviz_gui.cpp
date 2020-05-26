@@ -244,6 +244,9 @@ void simulation(Sai2Model::Sai2Model *robot, Simulation::Sai2Simulation *sim, UI
 	double last_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
+    // init variables
+	VectorXd g(dof);
+
 	Eigen::Vector3d ui_force;
 	ui_force.setZero();
 
@@ -265,7 +268,9 @@ void simulation(Sai2Model::Sai2Model *robot, Simulation::Sai2Simulation *sim, UI
 		if (fRobotLinkSelect)
 			sim->setJointTorques(robot_name, command_torques + ui_force_command_torques);
 		else
-			sim->setJointTorques(robot_name, command_torques);
+            // get gravity torques
+            robot->gravityVector(g);
+			sim->setJointTorques(robot_name, command_torques + g);
 
 		// integrate forward
 		sim->integrate(0.001);
