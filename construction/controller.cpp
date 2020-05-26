@@ -20,17 +20,17 @@ using namespace Eigen;
 
 const string robot_file = "./resources/mmp_panda.urdf";
 
-#define JOINT_CONTROLLER      0
-#define POSORI_CONTROLLER     1
+#define BASE_NAV              1
+#define A_SIDE_BOTTOM         2
+#define A_SIDE_BOTTOM_THRU    3
+#define A_SIDE_TOP            4
+#define A_SIDE_TOP_THRU       5
+#define BASE_DROP    		  6
+#define B_SIDE_BOTTOM         7
+#define B_SIDE_BOTTOM_THRU    8
+#define B_SIDE_TOP            9
+#define B_SIDE_TOP_THRU       10
 
-#define BASE_NAV              2
-#define BASE_ELEV             3
-#define A_SIDE_BOTTTOM        4
-#define A_SIDE_TOP            5
-#define B_SIDE_BOTTOM         6
-#define B_SIDE_TOP            7
-
-int control_type = JOINT_CONTROLLER;
 int state = BASE_NAV;
 
 
@@ -77,9 +77,9 @@ int main() {
 	VectorXd command_torques = VectorXd::Zero(dof);
 	MatrixXd N_prec = MatrixXd::Identity(dof, dof);
 
-	// pose task
+	/*** SET UP POSORI TASK***/
 	const string control_link = "linkTool";
-	const Vector3d control_point = Vector3d(0,0.104,0.243);
+	const Vector3d control_point = Vector3d(0,0.104,0.203);
 	auto posori_task = new Sai2Primitives::PosOriTask(robot, control_link, control_point);
 
 	#ifdef USING_OTG
@@ -88,13 +88,18 @@ int main() {
 		posori_task->_use_velocity_saturation_flag = true;
 	#endif
 	
+	// controller gains
 	VectorXd posori_task_torques = VectorXd::Zero(dof);
 	posori_task->_kp_pos = 200.0;
 	posori_task->_kv_pos = 20.0;
 	posori_task->_kp_ori = 200.0;
 	posori_task->_kv_ori = 20.0;
 
-	// joint task
+	// controller desired positions
+	Vector3d x_des = Vector3d::Zero(3); 
+	MatrixXd ori_des = Matrix3d::Zero();
+
+	/*** SET UP JOINT TASK ***/
 	auto joint_task = new Sai2Primitives::JointTask(robot);
 
 	#ifdef USING_OTG
@@ -103,16 +108,15 @@ int main() {
 		joint_task->_use_velocity_saturation_flag = true;
 	#endif
 
+	// controller gains
 	VectorXd joint_task_torques = VectorXd::Zero(dof);
 	joint_task->_kp = 250.0;
 	joint_task->_kv = 15.0;
 
-	VectorXd q_init_desired = initial_q;
-	q_init_desired << 0.41, 1.76, 1.12, -.07, -.13, .14, .49, 5.6, 1.36, 2, 7.27; //0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	// 0.41, 1.76, 1.12, -.07, -.13, .14, .49, 5.6, 1.36, 2, 7.27
-	//q_init_desired *= M_PI/180.0;
-	joint_task->_desired_position = q_init_desired;
+	// controller desired angles
+	VectorXd q_des = VectorXd::Zero(dof);
 
+	/*** BEGIN LOOP ***/
 	// create a timer
 	LoopTimer timer;
 	timer.initializeTimer();
@@ -132,68 +136,101 @@ int main() {
 		// update model
 		robot->updateModel();
 
+
+		// // state switching
 		// if(state == BASE_NAV){
+		// 	// Set desired task position
+		// 	x_des << 0, 0, 0;
+		// 	// Set desired orientation
+		// 	ori_des.setIdentity();
+
+		// 	//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
+		// 	// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
+		// 	if( ){ // check if goal position reached 
+		// 		state = A_SIDE_BOTTOM; // advance to next state
+		// 	}
 
 		// }
 
-		// else if(state == BASE_ELEV){
+		// else if(state == A_SIDE_BOTTOM){
+		// 	// Set desired task position
+		// 	x_des << 0.09, 2.2, 2.3;
+		// 	// Set desired orientation
+		// 	ori_des = (AngleAxisd(0.25*M_PI, Vector3d::UnitX())
+  // 					* AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+  // 					* AngleAxisd(0.33*M_PI, Vector3d::UnitZ())).toRotationMatrix();
+
+		// 	// Set desired joint angles
+		// 	q_des << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+
+		// 	//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
+		// 	// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
+		// 	if( ){ // check if hole position reached 
+
+		// 		state = A_SIDE_BOTTOM_THRU; // advance to next state
+
+		// 	}
 
 		// }
 
-		// else if(state == A_SIDE_BOTTTOM){
+		// else if(state == A_SIDE_BOTTOM_THRU){
+		// 	// Set new position for opposite side of hole (i.e. add wall thickness)
+		// 	x_des += Vector3d(0, 0.06, 0);
+
+		// 	if(){ // check if end effector has hit wall and stopped advancing, maybe set counter
+		// 		state = BASE_DROP; // advance to next state
+		// 	}
 
 		// }
 
 		// else if(state == A_SIDE_TOP){
+		// 	x_des << 0.09, 2.2, 2.56;
+
+		// }
+
+		// else if(state == A_SIDE_TOP_THRU){
+
+		// }
+
+		// else if(state == BASE_DROP){
 
 		// }
 
 		// else if(state == B_SIDE_BOTTOM){
+		// 	x_des << -0.03, 2.2, 2.3;
+		// }
+
+		// else if(state == B_SIDE_BOTTOM_THRU){
 
 		// }
 
 		// else if(state == B_SIDE_TOP){
+		// 	x_des << -0.03, 2.2, 2.56;
 
 		// }
-	
-		if(control_type == JOINT_CONTROLLER)
-		{
-			// update task model and set hierarchy
-			N_prec.setIdentity();
-			joint_task->updateTaskModel(N_prec);
 
-			// compute torques
-			joint_task->computeTorques(joint_task_torques);
+		// else if(state == B_SIDE_TOP_THRU){
 
-			command_torques = joint_task_torques;
+		// }
 
-			if( (robot->_q - q_init_desired).norm() < 0.15 )
-			{
-				posori_task->reInitializeTask();
-				posori_task->_desired_position = Vector3d(0,2.18,2.28); //posori_task->_desired_position += Vector3d(0,2.18,2.28)
-				posori_task->_desired_orientation = AngleAxisd(M_PI/6, Vector3d::UnitX()).toRotationMatrix() * posori_task->_desired_orientation;
+		/*** POSORI CONTROL W/ JOINT CONTROL IN NULLSPACE***/
+		// update controlller posiitons
+		posori_task->_desired_position = x_des;
+		posori_task->_desired_orientation = ori_des;
+		joint_task->_desired_position = q_des;	
 
-				joint_task->reInitializeTask();
-				joint_task->_kp = 0;
+		// update task model and set hierarchy
+		N_prec.setIdentity();
+		posori_task->updateTaskModel(N_prec);
+		N_prec = posori_task->_N;
+		joint_task->updateTaskModel(N_prec);
 
-				control_type = POSORI_CONTROLLER;
-			}
-		}
+		// compute torques
+		posori_task->computeTorques(posori_task_torques);
+		joint_task->computeTorques(joint_task_torques);
 
-		else if(control_type == POSORI_CONTROLLER)
-		{
-			// update task model and set hierarchy
-			N_prec.setIdentity();
-			posori_task->updateTaskModel(N_prec);
-			N_prec = posori_task->_N;
-			joint_task->updateTaskModel(N_prec);
+		command_torques = posori_task_torques + joint_task_torques;
 
-			// compute torques
-			posori_task->computeTorques(posori_task_torques);
-			joint_task->computeTorques(joint_task_torques);
-
-			command_torques = posori_task_torques + joint_task_torques;
-		}
 
 		// send to redis
 		redis_client.setEigenMatrixJSON(JOINT_TORQUES_COMMANDED_KEY, command_torques);
