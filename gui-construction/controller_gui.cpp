@@ -386,8 +386,11 @@ int main(int argc, char **argv)
     VectorXd nav_task_torques = VectorXd::Zero(dof);
     VectorXd coriolis = VectorXd::Zero(dof);
 
-    const std::string ee_link_name = "link7";
-    const Vector3d ee_pos_in_link = Vector3d(0.0, 0.0, 0.12);
+    // const std::string ee_link_name = "link7";
+    // const Vector3d ee_pos_in_link = Vector3d(0.0, 0.0, 0.12); 
+
+    const std::string ee_link_name = "linkTool";
+    const Vector3d ee_pos_in_link = Vector3d(0,0.104,0.243); // OG Vector3d(0.203,0,0.104);
 
     // const std::string body_link_name = "base_link";
     // const Vector3d body_pos_in_link = Vector3d(0.0, 0.0, 0.0);

@@ -22,6 +22,7 @@ const string robot_file = "./resources/mmp_panda.urdf";
 
 #define JOINT_CONTROLLER      0
 #define POSORI_CONTROLLER     1
+
 #define BASE_NAV              2
 #define BASE_ELEV             3
 #define A_SIDE_BOTTTOM        4
@@ -78,7 +79,7 @@ int main() {
 
 	// pose task
 	const string control_link = "linkTool";
-	const Vector3d control_point = Vector3d(0.203,0,0.104);
+	const Vector3d control_point = Vector3d(0,0.104,0.243);
 	auto posori_task = new Sai2Primitives::PosOriTask(robot, control_link, control_point);
 
 	#ifdef USING_OTG
