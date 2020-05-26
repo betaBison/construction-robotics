@@ -1,5 +1,5 @@
 // This example application loads a URDF world file and simulates two robots
-// with physics and contact in a Dynamics3D virtual world. A graphics model of it is also shown using 
+// with physics and contact in a Dynamics3D virtual world. A graphics model of it is also shown using
 // Chai3D.
 
 #include "Sai2Model.h"
@@ -87,7 +87,7 @@ int main() {
 	#else
 		posori_task->_use_velocity_saturation_flag = true;
 	#endif
-	
+
 	// controller gains
 	VectorXd posori_task_torques = VectorXd::Zero(dof);
 	posori_task->_kp_pos = 200.0;
@@ -96,7 +96,7 @@ int main() {
 	posori_task->_kv_ori = 20.0;
 
 	// controller desired positions
-	Vector3d x_des = Vector3d::Zero(3); 
+	Vector3d x_des = Vector3d::Zero(3);
 	MatrixXd ori_des = Matrix3d::Zero();
 
 	/*** SET UP JOINT TASK ***/
@@ -120,7 +120,7 @@ int main() {
 	// create a timer
 	LoopTimer timer;
 	timer.initializeTimer();
-	timer.setLoopFrequency(1000); 
+	timer.setLoopFrequency(1000);
 	double start_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
@@ -137,87 +137,111 @@ int main() {
 		robot->updateModel();
 
 
-		// // state switching
-		// if(state == BASE_NAV){
-		// 	// Set desired task position
-		// 	x_des << 0, 0, 0;
-		// 	// Set desired orientation
-		// 	ori_des.setIdentity();
+		// state switching
+		if(state == BASE_NAV){
+			// Set desired task position
+			x_des << 0, 0, 0;
+			// Set desired orientation
+			ori_des.setIdentity();
 
-		// 	//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
-		// 	// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
-		// 	if( ){ // check if goal position reached 
-		// 		state = A_SIDE_BOTTOM; // advance to next state
-		// 	}
+			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
+			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
+			if(true){ // check if goal position reached
+				state = A_SIDE_BOTTOM; // advance to next state
+			}
 
-		// }
+		}
 
-		// else if(state == A_SIDE_BOTTOM){
-		// 	// Set desired task position
-		// 	x_des << 0.09, 2.2, 2.3;
-		// 	// Set desired orientation
-		// 	ori_des = (AngleAxisd(0.25*M_PI, Vector3d::UnitX())
-  // 					* AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
-  // 					* AngleAxisd(0.33*M_PI, Vector3d::UnitZ())).toRotationMatrix();
+		else if(state == A_SIDE_BOTTOM){
+			// Set desired task position
+			x_des << 0.09, 2.2, 2.3;
+			// Set desired orientation
+			ori_des = (AngleAxisd(0.25*M_PI, Vector3d::UnitX())
+  					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+  					 * AngleAxisd(0.33*M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
-		// 	// Set desired joint angles
-		// 	q_des << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+			// Set desired joint angles
+			q_des << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
 
-		// 	//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
-		// 	// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
-		// 	if( ){ // check if hole position reached 
+			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
+			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
+			if( true ){ // check if hole position reached
 
-		// 		state = A_SIDE_BOTTOM_THRU; // advance to next state
+				state = A_SIDE_BOTTOM_THRU; // advance to next state
 
-		// 	}
+			}
 
-		// }
+		}
 
-		// else if(state == A_SIDE_BOTTOM_THRU){
-		// 	// Set new position for opposite side of hole (i.e. add wall thickness)
-		// 	x_des += Vector3d(0, 0.06, 0);
+		else if(state == A_SIDE_BOTTOM_THRU){
+			// Set new position for opposite side of hole (i.e. add wall thickness)
+			x_des += Vector3d(0, 0.06, 0);
 
-		// 	if(){ // check if end effector has hit wall and stopped advancing, maybe set counter
-		// 		state = BASE_DROP; // advance to next state
-		// 	}
+			if( true ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = BASE_DROP; // advance to next state
+			}
 
-		// }
+		}
 
-		// else if(state == A_SIDE_TOP){
-		// 	x_des << 0.09, 2.2, 2.56;
+		else if(state == A_SIDE_TOP){
+			x_des << 0.09, 2.2, 2.56;
 
-		// }
+		}
 
-		// else if(state == A_SIDE_TOP_THRU){
+		else if(state == A_SIDE_TOP_THRU){
 
-		// }
+		}
 
-		// else if(state == BASE_DROP){
+		else if(state == BASE_DROP){
 
-		// }
+		}
 
-		// else if(state == B_SIDE_BOTTOM){
-		// 	x_des << -0.03, 2.2, 2.3;
-		// }
+		else if(state == B_SIDE_BOTTOM){
+			x_des << -0.03, 2.2, 2.3;
+		}
 
-		// else if(state == B_SIDE_BOTTOM_THRU){
+		else if(state == B_SIDE_BOTTOM_THRU){
 
-		// }
+		}
 
-		// else if(state == B_SIDE_TOP){
-		// 	x_des << -0.03, 2.2, 2.56;
+		else if(state == B_SIDE_TOP){
+			x_des << -0.03, 2.2, 2.56;
 
-		// }
+		}
 
-		// else if(state == B_SIDE_TOP_THRU){
+		else if(state == B_SIDE_TOP_THRU){
 
-		// }
+		}
+
+        else if(state == JOINT_CONTROLLER)
+		{
+			// update task model and set hierarchy
+			N_prec.setIdentity();
+			joint_task->updateTaskModel(N_prec);
+
+			// compute torques
+			joint_task->computeTorques(joint_task_torques);
+
+			command_torques = joint_task_torques;
+
+			if( (robot->_q - q_init_desired).norm() < 0.15 )
+			{
+				posori_task->reInitializeTask();
+				posori_task->_desired_position += Vector3d(-0.1,0.1,0.1);
+				posori_task->_desired_orientation = AngleAxisd(M_PI/6, Vector3d::UnitX()).toRotationMatrix() * posori_task->_desired_orientation;
+
+				joint_task->reInitializeTask();
+				joint_task->_kp = 0;
+
+				state = POSORI_CONTROLLER;
+			}
+		}
 
 		/*** POSORI CONTROL W/ JOINT CONTROL IN NULLSPACE***/
 		// update controlller posiitons
 		posori_task->_desired_position = x_des;
 		posori_task->_desired_orientation = ori_des;
-		joint_task->_desired_position = q_des;	
+		joint_task->_desired_position = q_des;
 
 		// update task model and set hierarchy
 		N_prec.setIdentity();
