@@ -238,7 +238,7 @@
     <parent link = "base_theta" />
     <child link= "base_fix"/>
     <axis xyz = "0 0 1" />
-    <calibration rising="0.2" />
+    <calibration rising="0.0" />
     <limit effort="87" lower="0" upper="2.0" velocity="0.2" />
   </joint>
 
@@ -247,7 +247,7 @@
     <parent link = "base_fix" />
     <child link= "base_z"/>
     <axis xyz = "0 0 1" />
-    <calibration rising="0.2" />
+    <calibration rising="0.7" />
     <limit effort="87" lower="0" upper="2.0" velocity="0.2" />
   </joint>
 
