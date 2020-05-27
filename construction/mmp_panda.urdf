@@ -202,7 +202,7 @@
         <mesh filename="../../../model/Drill2/Drill2.obj"/>
       </geometry>-->
       <geometry>
-        <cylinder radius="0.05" length="0.25"/>
+        <cylinder radius="0.104" length="0.203"/>
       </geometry> 
     </collision>
   </link>
