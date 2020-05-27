@@ -136,18 +136,28 @@ int main() {
 		// update model
 		robot->updateModel();
 
+        if(controller_counter % 1000 == 0)
+        {
+            cout << "current state: " << state << "\n";
+            // cout << "counter: " << controller_counter << "\n";
+        }
 
 		// state switching
 		if(state == BASE_NAV){
 			// Set desired task position
-			x_des << 0, 0, 0;
+            q_des << robot->_q;
+			q_des(0) = 0;
+            q_des(1) = 1.9;
+            q_des(2) = 0.2;
+            q_des(3) = 1.57;
 			// Set desired orientation
 			ori_des.setIdentity();
 
 			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
 			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
-			if(true){ // check if goal position reached
+			if(controller_counter == 5000){ // check if goal position reached
 				state = A_SIDE_BOTTOM; // advance to next state
+                posori_task->reInitializeTask();
 			}
 
 		}
@@ -165,8 +175,8 @@ int main() {
 
 			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
 			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
-			if( true ){ // check if hole position reached
-
+			if( controller_counter == 15000 ){ // check if hole position reached
+                posori_task->reInitializeTask();
 				state = A_SIDE_BOTTOM_THRU; // advance to next state
 
 			}
@@ -175,9 +185,9 @@ int main() {
 
 		else if(state == A_SIDE_BOTTOM_THRU){
 			// Set new position for opposite side of hole (i.e. add wall thickness)
-			x_des += Vector3d(0, 0.06, 0);
+			x_des << 0.09, 2.26, 2.3;
 
-			if( true ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+			if( controller_counter == 20000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
 				state = BASE_DROP; // advance to next state
 			}
 
@@ -193,7 +203,7 @@ int main() {
 		}
 
 		else if(state == BASE_DROP){
-
+            q_des = initial_q;
 		}
 
 		else if(state == B_SIDE_BOTTOM){
@@ -212,9 +222,16 @@ int main() {
 		else if(state == B_SIDE_TOP_THRU){
 
 		}
+        else
+        {
+            // default state
+        }
 
-        else if(state == JOINT_CONTROLLER)
-		{
+        if(state == BASE_NAV || state == BASE_DROP)
+        {
+
+            joint_task->_desired_position = q_des;
+
 			// update task model and set hierarchy
 			N_prec.setIdentity();
 			joint_task->updateTaskModel(N_prec);
@@ -224,36 +241,29 @@ int main() {
 
 			command_torques = joint_task_torques;
 
-			if( (robot->_q - q_init_desired).norm() < 0.15 )
-			{
-				posori_task->reInitializeTask();
-				posori_task->_desired_position += Vector3d(-0.1,0.1,0.1);
-				posori_task->_desired_orientation = AngleAxisd(M_PI/6, Vector3d::UnitX()).toRotationMatrix() * posori_task->_desired_orientation;
-
-				joint_task->reInitializeTask();
-				joint_task->_kp = 0;
-
-				state = POSORI_CONTROLLER;
-			}
 		}
+        else
+        {
+            /*** POSORI CONTROL W/ JOINT CONTROL IN NULLSPACE***/
+    		// update controlller posiitons
+    		posori_task->_desired_position = x_des;
+    		posori_task->_desired_orientation = ori_des;
+    		joint_task->_desired_position = q_des;
 
-		/*** POSORI CONTROL W/ JOINT CONTROL IN NULLSPACE***/
-		// update controlller posiitons
-		posori_task->_desired_position = x_des;
-		posori_task->_desired_orientation = ori_des;
-		joint_task->_desired_position = q_des;
+    		// update task model and set hierarchy
+    		N_prec.setIdentity();
+    		posori_task->updateTaskModel(N_prec);
+    		N_prec = posori_task->_N;
+    		joint_task->updateTaskModel(N_prec);
 
-		// update task model and set hierarchy
-		N_prec.setIdentity();
-		posori_task->updateTaskModel(N_prec);
-		N_prec = posori_task->_N;
-		joint_task->updateTaskModel(N_prec);
+    		// compute torques
+    		posori_task->computeTorques(posori_task_torques);
+    		joint_task->computeTorques(joint_task_torques);
 
-		// compute torques
-		posori_task->computeTorques(posori_task_torques);
-		joint_task->computeTorques(joint_task_torques);
+    		command_torques = posori_task_torques + joint_task_torques;
+        }
 
-		command_torques = posori_task_torques + joint_task_torques;
+
 
 
 		// send to redis
