@@ -29,7 +29,22 @@
     </inertial>
   </link>
 
-  <link name = "base_z">
+  <link name = "base_theta">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <mass value = "2230" />
+      <inertia ixx="285" ixy="0.0" ixz="0.0" iyy="546" iyz="0.0" izz="700" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../../../model/mmp_panda_tall/meshes/WideBase.obj" />
+      </geometry>
+    </visual>
+  </link>
+
+
+  <!-- MOBILE BASE + LINK 0 OF PANDA ARM -->
+  <link name = "base_fix">
     <inertial>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <mass value = "0.001" />
@@ -37,10 +52,9 @@
     </inertial>
   </link>
 
-  <!-- MOBILE BASE + LINK 0 OF PANDA ARM -->
-  <link name = "base_link">
+  <link name = "base_z">
     <inertial>
-      <origin xyz="0.0 0.0 0.1757" rpy="0 0 0" />
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <mass value = "64.6" />
       <inertia ixx="1.721" ixy="0.0" ixz="0.0" iyy="1.712" iyz="0.0" izz="2.030" />
     </inertial>
@@ -51,24 +65,8 @@
     </visual>
   </link>
 
+
   <!-- PANDA ARM LINKS -->
-<!--<link name="link0">
-    <inertial>
-      <origin xyz="0 0 0.05" rpy="0 0 0" />
-      <mass value="4" />
-      <inertia ixx="0.4" iyy="0.4" izz="0.4" ixy="0" ixz="0" iyz="0" />
-    </inertial>
-    <visual>
-      <geometry>
-        <mesh filename="../../../model/panda/meshes/visual/link0.obj"/>
-      </geometry>
-    </visual>
-<!      <collision>
-        <geometry>
-          <mesh filename="../../../model/panda/meshes/collision/link0.obj"/>
-        </geometry>
-      </collision>
-  </link> -->
   <link name="link1">
     <inertial>
       <origin xyz="0 0 -0.07" rpy="0 -0 0" />
@@ -191,8 +189,8 @@
   <link name="linkTool">
     <inertial>
       <origin xyz="0 0 0.102" rpy="0 -0 0" />
-      <mass value="1" />
-      <inertia ixx="0" iyy="0" izz="0.003" ixy="0" ixz="0" iyz="0" />
+      <mass value="2.2" />
+      <inertia ixx="0.001" iyy="0.011" izz="0.011" ixy="0" ixz="0" iyz="0" />
     </inertial>
     <visual>
       <geometry>
@@ -214,7 +212,7 @@
     <child link= "base_x"/>
     <axis xyz = "1 0 0" />
     <calibration rising="0.0" />
-    <limit effort="87" lower="-5" upper="5." velocity="0.2" />
+    <limit effort="87" lower="-5" upper="5" velocity="0.2" />
   </joint>
 
   <joint name = "base_prismatic_y" type = "prismatic">
@@ -226,28 +224,37 @@
     <limit effort="87" lower="-5" upper="5" velocity="0.2" />
   </joint>
 
-  <joint name = "base_prismatic_z" type = "prismatic">
-    <origin xyz = "0 0 0" rpy = "0 0 0"/>
-    <parent link = "base_y" />
-    <child link= "base_z"/>
-    <axis xyz = "0 0 1" />
-    <calibration rising="0.2" />
-    <limit effort="87" lower="-1.0" upper="2.0" velocity="0.2" />
-  </joint>
-
   <joint name = "base_revolute" type = "revolute">
     <origin xyz = "0 0 0.0" rpy = "0 0 0"/>
-    <parent link = "base_z" />
-    <child link= "base_link"/>
+    <parent link = "base_y" />
+    <child link= "base_theta"/>
     <axis xyz = "0 0 1" />
     <calibration falling="0.0" />
     <limit effort="87" lower="-2.8973" upper="2.8973" velocity="2.1750" />
   </joint>
 
+  <joint name = "base_fixed" type = "fixed">
+    <origin xyz = "0 0 0" rpy = "0 0 0"/>
+    <parent link = "base_theta" />
+    <child link= "base_fix"/>
+    <axis xyz = "0 0 1" />
+    <calibration rising="0.2" />
+    <limit effort="87" lower="0" upper="2.0" velocity="0.2" />
+  </joint>
+
+  <joint name = "base_prismatic_z" type = "prismatic">
+    <origin xyz = "0 0 0" rpy = "0 0 0"/>
+    <parent link = "base_fix" />
+    <child link= "base_z"/>
+    <axis xyz = "0 0 1" />
+    <calibration rising="0.2" />
+    <limit effort="87" lower="0" upper="2.0" velocity="0.2" />
+  </joint>
+
   <joint name="joint1" type="revolute">
       <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.8973" soft_upper_limit="2.8973"/>
       <origin rpy="0 0 1.5708" xyz="0 0 0.333"/>
-      <parent link="base_link"/>
+      <parent link="base_z"/>
       <child link="link1"/>
       <axis xyz="0 0 1"/>
       <calibration falling="-90.0" />
