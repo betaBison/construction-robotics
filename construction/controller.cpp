@@ -147,9 +147,9 @@ int main() {
 			// Set desired task position
             q_des << robot->_q;
 			q_des(0) = 0;
-            q_des(1) = 1.9;
-            q_des(2) = 0.2;
-            q_des(3) = 1.57;
+            q_des(1) = 1.65;
+            q_des(2) = 0.0;
+            q_des(3) = 0.7;
 			// Set desired orientation
 			ori_des.setIdentity();
 
