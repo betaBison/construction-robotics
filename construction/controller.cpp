@@ -155,7 +155,7 @@ int main() {
 
 			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
 			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
-			if(controller_counter == 5000){ // check if goal position reached
+			if(controller_counter == 10000){ // check if goal position reached
 				state = A_SIDE_BOTTOM; // advance to next state
 				posori_task->reInitializeTask();
 				q_des << robot->_q; // Set desired joint angles
@@ -164,6 +164,7 @@ int main() {
 		}
 
 		else if(state == A_SIDE_BOTTOM){
+			
 			// Set desired task position
 			x_des << 0.09, 2.2, 2.3;
 			// Set desired orientation
@@ -174,6 +175,7 @@ int main() {
 			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
 			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
 			if( controller_counter == 15000 ){ // check if hole position reached
+				// if ((robot->_x - x_des).norm() < 0.017) //position of tool tip
 				posori_task->reInitializeTask();
 				state = A_SIDE_BOTTOM_THRU; // advance to next state
 
@@ -184,45 +186,98 @@ int main() {
 		else if(state == A_SIDE_BOTTOM_THRU){
 			// Set new position for opposite side of hole (i.e. add wall thickness)
 			x_des << 0.09, 2.26, 2.3;
+			// Set desired orientation
+			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
+					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
 			if( controller_counter == 20000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
-				state = BASE_DROP; // advance to next state
+				state = A_SIDE_TOP; // advance to next state
 			}
 
 		}
 
 		else if(state == A_SIDE_TOP){
 			x_des << 0.09, 2.2, 2.56;
+			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
+					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
+			if( controller_counter == 30000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = A_SIDE_TOP_THRU; // advance to next state
+			}			
 		}
 
 		else if(state == A_SIDE_TOP_THRU){
-
+			x_des << 0.09, 2.26, 2.56;
+			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
+					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 40000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = BASE_DROP; // advance to next state
+			}	
 		}
 
 		else if(state == BASE_DROP){
 			q_des = initial_q;
+			//q_des << robot->_q;
+			q_des(0) = 0;
+			q_des(1) = 1.65;
+			q_des(2) = 0.0;
+			q_des(3) = 0.7;
+			// Set desired orientation
+			ori_des.setIdentity();
+
+			if( controller_counter == 50000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_BOTTOM; // advance to next state
+			}	
 		}
 
 		else if(state == B_SIDE_BOTTOM){
 			x_des << -0.03, 2.2, 2.3;
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 60000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_BOTTOM_THRU; // advance to next state
+			}
+
 		}
 
 		else if(state == B_SIDE_BOTTOM_THRU){
+			x_des << -0.03, 2.26, 2.3;
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 70000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_TOP; // advance to next state
+			}
 
 		}
 
 		else if(state == B_SIDE_TOP){
 			x_des << -0.03, 2.2, 2.56;
-
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 80000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_TOP_THRU; // advance to next state
+			}
 		}
 
 		else if(state == B_SIDE_TOP_THRU){
-
+			x_des << -0.03, 2.26, 2.56;
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+		
+			if( controller_counter == 90000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = BASE_DROP; // advance to next state
+			}
 		}
 		else
 		{
-			// default state
+			state == BASE_DROP;
 		}
 
 		if(state == BASE_NAV || state == BASE_DROP)
