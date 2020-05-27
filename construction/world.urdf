@@ -11,12 +11,12 @@
     <!-- YZ_steel -->
     <static_object name = "YZ_steel">
         <origin xyz="0.0 0.0 0" rpy="0 0 0" />
-        <collision>
+        <!--<collision>
             <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
             <geometry>
                 <mesh filename="./resources/../../../model/test_objects/meshes/visual/YZ_steel.obj" scale="1.0 1.0 1.0"/>
             </geometry>
-        </collision>
+        </collision> -->
         <visual>
             <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
             <geometry>
@@ -38,6 +38,43 @@
         </visual>
     </static_object>
 
+    <static_object name="Column">
+        <origin xyz="0.0 0 0" rpy="0 0 0" />
+        <collision>
+            <origin xyz="0.035 2.3 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.20 0.20 4.9" />
+            </geometry>
+        </collision>
+        <!--<visual>
+            <origin xyz="0.035 2.3 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.20 0.20 4.9" />
+            </geometry>
+            <material name="material_red">
+                <color rgba="0.5 0.1 0.1 1.0" />
+            </material>
+        </visual> -->
+    </static_object>
+
+    <static_object name="Beam">
+        <origin xyz="0.0 0 0" rpy="0 0 0" />
+        <collision>
+            <origin xyz="0.035 -0.15 2.3" rpy="0 0 0" />
+            <geometry>
+                <box size="0.18 4.7 0.47" />
+            </geometry>
+        </collision>
+        <!--<visual>
+            <origin xyz="0.035 -0.15 2.3" rpy="0 0 0" />
+            <geometry>
+                <box size="0.18 4.7 0.47" />
+            </geometry>
+            <material name="material_red">
+                <color rgba="0.5 0.1 0.1 1.0" />
+            </material>
+        </visual> -->
+    </static_object>
 
 	<light name="light1" type="directional">
 		<position xyz="2.0 2.0 5.0" />
