@@ -28,6 +28,46 @@
         </visual>
     </static_object>
 
+    <static_object name="Cones">
+        <origin xyz="0.0 0 0" rpy="0 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="./resources/../../../model/test_objects/meshes/visual/Cones.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name="Railings">
+        <origin xyz="0.0 0 0" rpy="0 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="./resources/../../../model/test_objects/meshes/visual/Railings.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name="Scaffolder">
+        <origin xyz="0.0 0 0" rpy="0 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="./resources/../../../model/test_objects/meshes/visual/Scaffolder.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name="Stairs">
+        <origin xyz="0.0 0 0" rpy="0 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="./resources/../../../model/test_objects/meshes/visual/Stairs.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
     <static_object name="Cube">
         <origin xyz="0.0 0 0" rpy="0 0 0" />
         <visual>
