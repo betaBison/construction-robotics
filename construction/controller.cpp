@@ -136,47 +136,47 @@ int main() {
 		// update model
 		robot->updateModel();
 
-        if(controller_counter % 1000 == 0)
-        {
-            cout << "current state: " << state << "\n";
-            // cout << "counter: " << controller_counter << "\n";
-        }
+		if(controller_counter % 1000 == 0)
+		{
+			cout << "current state: " << state << "\n";
+			// cout << "counter: " << controller_counter << "\n";
+		}
 
 		// state switching
 		if(state == BASE_NAV){
 			// Set desired task position
-            q_des << robot->_q;
+			q_des << robot->_q;
 			q_des(0) = 0;
-            q_des(1) = 1.65;
-            q_des(2) = 0.0;
-            q_des(3) = 0.7;
+			q_des(1) = 1.65;
+			q_des(2) = 0.0;
+			q_des(3) = 0.7;
 			// Set desired orientation
 			ori_des.setIdentity();
 
 			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
 			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
-			if(controller_counter == 5000){ // check if goal position reached
+			if(controller_counter == 10000){ // check if goal position reached
 				state = A_SIDE_BOTTOM; // advance to next state
-                posori_task->reInitializeTask();
+				posori_task->reInitializeTask();
+				q_des << robot->_q; // Set desired joint angles
 			}
 
 		}
 
 		else if(state == A_SIDE_BOTTOM){
+			
 			// Set desired task position
 			x_des << 0.09, 2.2, 2.3;
 			// Set desired orientation
-			ori_des = (AngleAxisd(0.25*M_PI, Vector3d::UnitX())
-  					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
-  					 * AngleAxisd(0.33*M_PI, Vector3d::UnitZ())).toRotationMatrix();
-
-			// Set desired joint angles
-			q_des << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
+					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
 			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
 			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
 			if( controller_counter == 15000 ){ // check if hole position reached
-                posori_task->reInitializeTask();
+				// if ((robot->_x - x_des).norm() < 0.017) //position of tool tip
+				posori_task->reInitializeTask();
 				state = A_SIDE_BOTTOM_THRU; // advance to next state
 
 			}
@@ -186,51 +186,104 @@ int main() {
 		else if(state == A_SIDE_BOTTOM_THRU){
 			// Set new position for opposite side of hole (i.e. add wall thickness)
 			x_des << 0.09, 2.26, 2.3;
+			// Set desired orientation
+			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
+					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
 			if( controller_counter == 20000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
-				state = BASE_DROP; // advance to next state
+				state = A_SIDE_TOP; // advance to next state
 			}
 
 		}
 
 		else if(state == A_SIDE_TOP){
 			x_des << 0.09, 2.2, 2.56;
+			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
+					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
+			if( controller_counter == 30000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = A_SIDE_TOP_THRU; // advance to next state
+			}			
 		}
 
 		else if(state == A_SIDE_TOP_THRU){
-
+			x_des << 0.09, 2.26, 2.56;
+			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
+					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 40000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = BASE_DROP; // advance to next state
+			}	
 		}
 
 		else if(state == BASE_DROP){
-            q_des = initial_q;
+			q_des = initial_q;
+			//q_des << robot->_q;
+			q_des(0) = 0;
+			q_des(1) = 1.65;
+			q_des(2) = 0.0;
+			q_des(3) = 0.7;
+			// Set desired orientation
+			ori_des.setIdentity();
+
+			if( controller_counter == 50000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_BOTTOM; // advance to next state
+			}	
 		}
 
 		else if(state == B_SIDE_BOTTOM){
 			x_des << -0.03, 2.2, 2.3;
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 60000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_BOTTOM_THRU; // advance to next state
+			}
+
 		}
 
 		else if(state == B_SIDE_BOTTOM_THRU){
+			x_des << -0.03, 2.26, 2.3;
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 70000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_TOP; // advance to next state
+			}
 
 		}
 
 		else if(state == B_SIDE_TOP){
 			x_des << -0.03, 2.2, 2.56;
-
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			if( controller_counter == 80000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = B_SIDE_TOP_THRU; // advance to next state
+			}
 		}
 
 		else if(state == B_SIDE_TOP_THRU){
-
+			x_des << -0.03, 2.26, 2.56;
+			ori_des = (AngleAxisd(0, Vector3d::UnitX())
+					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
+					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+		
+			if( controller_counter == 90000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+				state = BASE_DROP; // advance to next state
+			}
 		}
-        else
-        {
-            // default state
-        }
+		else
+		{
+			state == BASE_DROP;
+		}
 
-        if(state == BASE_NAV || state == BASE_DROP)
-        {
+		if(state == BASE_NAV || state == BASE_DROP)
+		{
 
-            joint_task->_desired_position = q_des;
+			joint_task->_desired_position = q_des;
 
 			// update task model and set hierarchy
 			N_prec.setIdentity();
@@ -242,26 +295,30 @@ int main() {
 			command_torques = joint_task_torques;
 
 		}
-        else
-        {
-            /*** POSORI CONTROL W/ JOINT CONTROL IN NULLSPACE***/
-    		// update controlller posiitons
-    		posori_task->_desired_position = x_des;
-    		posori_task->_desired_orientation = ori_des;
-    		joint_task->_desired_position = q_des;
+		else
+		{
+			/*** POSORI CONTROL W/ JOINT CONTROL IN NULLSPACE***/
+			// update controlller posiitons
+			posori_task->_desired_position = x_des;
+			posori_task->_desired_orientation = ori_des;
+			joint_task->_desired_position = q_des;
 
-    		// update task model and set hierarchy
-    		N_prec.setIdentity();
-    		posori_task->updateTaskModel(N_prec);
-    		N_prec = posori_task->_N;
-    		joint_task->updateTaskModel(N_prec);
+			// update task model and set hierarchy
+			N_prec.setIdentity();
+			posori_task->updateTaskModel(N_prec);
+			N_prec = posori_task->_N;
+			joint_task->updateTaskModel(N_prec);
 
-    		// compute torques
-    		posori_task->computeTorques(posori_task_torques);
-    		joint_task->computeTorques(joint_task_torques);
+			// compute torques
+			posori_task->computeTorques(posori_task_torques);
+			joint_task->computeTorques(joint_task_torques);
 
-    		command_torques = posori_task_torques + joint_task_torques;
-        }
+			command_torques = posori_task_torques + joint_task_torques;
+			command_torques(0) = 0;
+			command_torques(1) = 0;
+			command_torques(2) = 0;
+
+		}
 
 
 
@@ -273,10 +330,10 @@ int main() {
 	}
 
 	double end_time = timer.elapsedTime();
-    std::cout << "\n";
-    std::cout << "Controller Loop run time  : " << end_time << " seconds\n";
-    std::cout << "Controller Loop updates   : " << timer.elapsedCycles() << "\n";
-    std::cout << "Controller Loop frequency : " << timer.elapsedCycles()/end_time << "Hz\n";
+	std::cout << "\n";
+	std::cout << "Controller Loop run time  : " << end_time << " seconds\n";
+	std::cout << "Controller Loop updates   : " << timer.elapsedCycles() << "\n";
+	std::cout << "Controller Loop frequency : " << timer.elapsedCycles()/end_time << "Hz\n";
 
 	return 0;
 }
