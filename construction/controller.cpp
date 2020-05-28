@@ -145,17 +145,14 @@ int main() {
 		// state switching
 		if(state == BASE_NAV){
 			// Set desired task position
-			q_des << robot->_q;
+			q_des << initial_q;
 			q_des(0) = 0;
 			q_des(1) = 1.65;
 			q_des(2) = 0.0;
-			q_des(3) = 0.7;
 			// Set desired orientation
 			ori_des.setIdentity();
 
-			//	bool goalOrientationReached(const double tolerance, const bool verbose = false);
-			// 	bool goalPositionReached(const double tolerance, const bool verbose = false);
-			if(controller_counter == 10000){ // check if goal position reached
+			if((robot->_q - q_des).norm() < 1E-4){ // check if goal position reached
 				state = A_SIDE_BOTTOM; // advance to next state
 				posori_task->reInitializeTask();
 				q_des << robot->_q; // Set desired joint angles
@@ -222,16 +219,12 @@ int main() {
 		}
 
 		else if(state == BASE_DROP){
-			q_des = initial_q;
-			//q_des << robot->_q;
-			q_des(0) = 0;
-			q_des(1) = 1.65;
-			q_des(2) = 0.0;
+			q_des << robot->_q;
 			q_des(3) = 0.7;
 			// Set desired orientation
 			ori_des.setIdentity();
 
-			if( controller_counter == 50000 ){ // check if end effector has hit wall and stopped advancing, maybe set counter
+			if((robot->_q - q_des).norm() < 1E-4){ // check if end effector has hit wall and stopped advancing, maybe set counter
 				state = B_SIDE_BOTTOM; // advance to next state
                 posori_task->reInitializeTask();
                 q_des << robot->_q; // Set desired joint angles
