@@ -30,15 +30,10 @@
   </link>
 
   <link name = "base_theta">
-    <!--inertial>
+    <inertial>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <mass value = "2230" />
       <inertia ixx="285" ixy="0.0" ixz="0.0" iyy="546" iyz="0.0" izz="700" />
-    </inertial-->
-    <inertial>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-      <mass value = "64.6" />
-      <inertia ixx="1.721" ixy="0.0" ixz="0.0" iyy="1.712" iyz="0.0" izz="2.030" />
     </inertial>
     <visual>
       <geometry>
@@ -202,11 +197,14 @@
         <mesh filename="../../../model/Drill2/Drill2.obj"/>
       </geometry>
     </visual>
-  <!-- collision>
-      <geometry>
+  <collision>
+      <!-- geometry>
         <mesh filename="../../../model/Drill2/Drill2.obj"/>
-      </geometry>
-    </collision> -->
+      </geometry>-->
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry> 
+    </collision>
   </link>
 
 
@@ -233,7 +231,7 @@
     <origin xyz = "0 0 0.0" rpy = "0 0 0"/>
     <parent link = "base_y" />
     <child link= "base_theta"/>
-    <axis xyz = "0 0 1" />
+    <axis xyz = "0 0 1" />git c
     <calibration falling="0.0" />
     <limit effort="87" lower="-2.8973" upper="2.8973" velocity="2.1750" />
   </joint>
