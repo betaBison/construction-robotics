@@ -30,10 +30,15 @@
   </link>
 
   <link name = "base_theta">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <mass value = "2230" />
       <inertia ixx="285" ixy="0.0" ixz="0.0" iyy="546" iyz="0.0" izz="700" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <mass value = "64.6" />
+      <inertia ixx="1.721" ixy="0.0" ixz="0.0" iyy="1.712" iyz="0.0" izz="2.030" />
     </inertial>
     <visual>
       <geometry>
@@ -234,7 +239,7 @@
   </joint>
 
   <joint name = "base_fixed" type = "fixed">
-    <origin xyz = "0 0 0" rpy = "0 0 0"/>
+    <origin xyz = "0 0 0" rpy = "0 0 1.57079632679"/>
     <parent link = "base_theta" />
     <child link= "base_fix"/>
     <axis xyz = "0 0 1" />
