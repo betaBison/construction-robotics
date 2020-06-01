@@ -285,7 +285,7 @@ int main() {
 		}
 
 		else if(state == BASE_DROP){
-			q_des << robot->_q; // set desired joint angles
+			q_des << robot->_q; // set desired joint
 			q_des(3) = 0.7;
 			// Set desired orientation
 			ori_des.setIdentity();
