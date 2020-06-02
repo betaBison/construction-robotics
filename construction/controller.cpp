@@ -36,9 +36,11 @@ const string robot_file = "./resources/mmp_panda.urdf";
 #define B_SIDE_TOP            12
 #define B_SIDE_TOP_THRU       13
 
+#define HOME                  14
+#define POSITION_HOLD         15
 
 
-int state = A_SIDE_BASE_NAV;
+int state = POSITION_HOLD;
 int elev_counter = 0; // Counter to check whether arm is ascending or descending to point parallel to bottom of beam
 int pull_counter = 0; // counter to check if drill is going into our out of hole
 int drop_counter = 0; // Counter to check if arm is dropping after A-side, or after B-side
@@ -49,6 +51,7 @@ int drop_counter = 0; // Counter to check if arm is dropping after A-side, or af
 std::string JOINT_ANGLES_KEY;
 std::string JOINT_VELOCITIES_KEY;
 std::string JOINT_TORQUES_SENSED_KEY;
+std::string CONTINUE_KEY;
 // - write
 std::string JOINT_TORQUES_COMMANDED_KEY;
 
@@ -66,10 +69,14 @@ int main() {
 	JOINT_ANGLES_KEY = "sai2::cs225a::robot::mmp_panda::sensors::q";
 	JOINT_VELOCITIES_KEY = "sai2::cs225a::robot::mmp_panda::sensors::dq";
 	JOINT_TORQUES_COMMANDED_KEY = "sai2::cs225a::robot::mmp_panda::actuators::fgc";
+	CONTINUE_KEY = "continue";
+
 
 	// start redis client
 	auto redis_client = RedisClient();
 	redis_client.connect();
+
+	redis_client.set(CONTINUE_KEY,"0");
 
 	// set up signal handler
 	signal(SIGABRT, &sighandler);
@@ -120,7 +127,7 @@ int main() {
 	#else
 		joint_task->_use_velocity_saturation_flag = true;
 	#endif
-    joint_task->_saturation_velocity << M_PI/6, M_PI/6, M_PI/6; // set new slower velocity (to help visualize)
+	joint_task->_saturation_velocity << M_PI/6, M_PI/6, M_PI/6; // set new slower velocity (to help visualize)
 
 
 	// controller gains
@@ -130,6 +137,7 @@ int main() {
 
 	// controller desired angles
 	VectorXd q_des = VectorXd::Zero(dof);
+	q_des = robot->_q;
 
 	/*** BEGIN LOOP ***/
 	// create a timer
@@ -138,6 +146,24 @@ int main() {
 	timer.setLoopFrequency(1000);
 	double start_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
+
+	MatrixXd cl = MatrixXd::Zero(3,2); // column locations
+	cl.row(0) << 0.035 , -2.465; // x location of column
+	cl.row(1) << 2.20 , 2.20; // y location of column
+	cl.row(2) << M_PI/2. , M_PI/2.; // direction of holes
+
+	int cc = 0; // current column
+
+	// building column parameters
+	float base_front_offset = 0.55;
+	float base_side_offset = 0.17;
+	float tool_midpoint_offset = 0.27;
+
+	// hole parameters
+	float bottom_hole_height = 2.3;
+	float top_hole_height = 2.56;
+	float hole_side_offset = 0.06;
+	float drill_depth = 0.06;
 
 	while (runloop) {
 		// wait for next scheduled loop
@@ -159,17 +185,51 @@ int main() {
 			cout << "arm joint angles:" << robot->_q(4) << " " << robot->_q(5) << " " << robot->_q(6) << " " <<
 										robot->_q(7) << " " << robot->_q(8) << " " << robot->_q(9) << " " << robot->_q(10) << endl;
 			cout << "current speed:" << posori_task->_current_velocity(0) << " " << posori_task->_current_velocity(1) << " " << posori_task->_current_velocity(2) << endl;
-			cout << endl; 
+			cout << endl;
 			// cout << "counter: " << controller_counter << "\n";
 		}
 
 		// state switching
-		if(state == A_SIDE_BASE_NAV){ 
+		if(state == HOME){
 			// Set desired task position
 			q_des << initial_q;
-			q_des(0) = 0.2;
-			q_des(1) = 1.65;
-			q_des(2) = 0.0;
+
+		}
+
+		else if(state == POSITION_HOLD){
+			// Set desired task position
+			q_des(3) = initial_q(3);
+			q_des(4) = initial_q(4);
+			q_des(5) = initial_q(5);
+			q_des(6) = initial_q(6);
+			q_des(7) = initial_q(7);
+			q_des(8) = initial_q(8);
+			q_des(9) = initial_q(9);
+			q_des(10) = initial_q(10);
+
+			// Set desired orientation
+			cout << '\n' << "run 'set continue 1' to move on to column "<< cc+1 << "\n";
+			int continue_result = 0;
+			continue_result = stoi(redis_client.get(CONTINUE_KEY));
+
+			if (continue_result == 1)
+			{
+				joint_task->reInitializeTask();
+				posori_task->reInitializeTask();
+				state = A_SIDE_BASE_NAV; // advance to next state
+			}
+
+		}
+
+		else if(state == A_SIDE_BASE_NAV){
+			// Set desired task position
+			q_des << initial_q;
+			// q_des(0) = 0.2;
+			// q_des(1) = 1.65;
+			// q_des(2) = 0.0;
+			q_des(0) = cl.coeff(0,cc) + base_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) + base_front_offset*cos(cl.coeff(2,cc) + M_PI);
+			q_des(1) = cl.coeff(1,cc) + base_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) + base_front_offset*sin(cl.coeff(2,cc) + M_PI);
+			q_des(2) = cl.coeff(2,cc) - M_PI/2.;
 
 			// Set desired orientation
 			ori_des.setIdentity();
@@ -186,32 +246,38 @@ int main() {
 
 		else if(state == A_SIDE_ELEV){ //
 			// Set new position for opposite side of hole (i.e. add wall thickness)
-			x_des << 0.30, 2.2, 2.3; 
+			//x_des << 0.30, 2.2, 2.3;
+			x_des(0) = cl.coeff(0,cc) + tool_midpoint_offset*cos(cl.coeff(2,cc) - M_PI/2.);
+			x_des(1) = cl.coeff(1,cc) + tool_midpoint_offset*sin(cl.coeff(2,cc) - M_PI/2.);
+			x_des(2) = bottom_hole_height;
 			// Set desired orientation
 			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
 					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
-                joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
-                
-                // Advanced to the correct state depending if you are on your way up or down from holes
-                if(elev_counter == 0){
-                	state = A_SIDE_BOTTOM;
-                	elev_counter = 1;
-                }
-                else{
-                	state = BASE_DROP;
-                	elev_counter = 0;
-                } 
+				joint_task->reInitializeTask();
+				posori_task->reInitializeTask();
+
+				// Advanced to the correct state depending if you are on your way up or down from holes
+				if(elev_counter == 0){
+					state = A_SIDE_BOTTOM;
+					elev_counter = 1;
+				}
+				else{
+					state = BASE_DROP;
+					elev_counter = 0;
+				}
 			}
 		}
 
-		else if(state == A_SIDE_BOTTOM){ 
+		else if(state == A_SIDE_BOTTOM){
 
 			// Set desired task position
-			x_des << 0.09, 2.2, 2.3;
+			//x_des << 0.09, 2.2, 2.3;
+			x_des(0) = cl.coeff(0,cc) + hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.);
+			x_des(1) = cl.coeff(1,cc) + hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.);
+			x_des(2) = bottom_hole_height;
 			// Set desired orientation
 			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
 					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
@@ -222,65 +288,74 @@ int main() {
 				posori_task->reInitializeTask();
 
 				// Advanced to the correct state depending if you are going into or pulling out of hole
-                if(pull_counter == 0){
-                	state = A_SIDE_BOTTOM_THRU; // arrived to hole surface and proceeding to go in
-                	pull_counter = 1;
-                }
-                else{
-                	state = A_SIDE_TOP; // just exited hole and moving to next hole
-                	pull_counter = 0;
-                } 
+				if(pull_counter == 0){
+					state = A_SIDE_BOTTOM_THRU; // arrived to hole surface and proceeding to go in
+					pull_counter = 1;
+				}
+				else{
+					state = A_SIDE_TOP; // just exited hole and moving to next hole
+					pull_counter = 0;
+				}
 			}
 		}
 
-		else if(state == A_SIDE_BOTTOM_THRU){ 
+		else if(state == A_SIDE_BOTTOM_THRU){
 			// Set new position for opposite side of hole (i.e. add wall thickness)
-			x_des << 0.09, 2.26, 2.3; 
+			//x_des << 0.09, 2.26, 2.3;
+			x_des(0) = cl.coeff(0,cc) + hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
+			x_des(1) = cl.coeff(1,cc) + hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
+			x_des(2) = bottom_hole_height;
 			// Set desired orientation
 			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
 					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
-                joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
-                
-                state = A_SIDE_BOTTOM; // advance to next state
+				joint_task->reInitializeTask();
+				posori_task->reInitializeTask();
+
+				state = A_SIDE_BOTTOM; // advance to next state
 			}
 		}
 
-		else if(state == A_SIDE_TOP){ 
-			x_des << 0.09, 2.2, 2.56;
+		else if(state == A_SIDE_TOP){
+			// x_des << 0.09, 2.2, 2.56;
+			x_des(0) = cl.coeff(0,cc) + 0.06*cos(cl.coeff(2,cc) - M_PI/2.);
+			x_des(1) = cl.coeff(1,cc) + 0.06*sin(cl.coeff(2,cc) - M_PI/2.);
+			x_des(2) = top_hole_height;
 			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
 					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
 
-			if ((posori_task->_current_position - x_des).norm() < tolerance){ 
-                joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
+			if ((posori_task->_current_position - x_des).norm() < tolerance){
+				joint_task->reInitializeTask();
+				posori_task->reInitializeTask();
 
 				// Advanced to the correct state depending if you are going into or pulling out of hole
-                if(pull_counter == 0){
-                	state = A_SIDE_TOP_THRU; // arrived to hole surface and proceeding to go in
-                	pull_counter = 1;
-                }
-                else{
-                	state = A_SIDE_ELEV; // just exited hole and moving to descend
-                	pull_counter = 0;
-                } 
+				if(pull_counter == 0){
+					state = A_SIDE_TOP_THRU; // arrived to hole surface and proceeding to go in
+					pull_counter = 1;
+				}
+				else{
+					state = A_SIDE_ELEV; // just exited hole and moving to descend
+					pull_counter = 0;
+				}
 			}
 		}
 
-		else if(state == A_SIDE_TOP_THRU){ 
-			x_des << 0.09, 2.26, 2.56; 
+		else if(state == A_SIDE_TOP_THRU){
+			// x_des << 0.09, 2.26, 2.56;
+			x_des(0) = cl.coeff(0,cc) + hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
+			x_des(1) = cl.coeff(1,cc) + hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
+			x_des(2) = top_hole_height;
 			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
 					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
-			if ((posori_task->_current_position - x_des).norm() < tolerance){ 
+			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
+				posori_task->reInitializeTask();
 
-                state = A_SIDE_TOP; // advance to next state
+				state = A_SIDE_TOP; // advance to next state
 			}
 		}
 
@@ -292,25 +367,39 @@ int main() {
 
 			if((robot->_q - q_des).norm() < tolerance){ // check if end effector has hit wall and stopped advancing, maybe set counter
 				joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
+				posori_task->reInitializeTask();
 
-                // Advanced to the correct state depending if you are going from A-side to B-side, or finished the beam
-                if(drop_counter == 0){
-                	state = B_SIDE_BASE_NAV;
-                	drop_counter = 1;
-                }
-                else{
-                	state = BASE_DROP; // stay at BASE_DROP state after finishing
-                }
+				// Advanced to the correct state depending if you are going from A-side to B-side, or finished the beam
+				if(drop_counter == 0){
+					state = B_SIDE_BASE_NAV;
+					drop_counter = 1;
+				}
+				else{
+					drop_counter = 0;
+					cc++;
+					if ((cc+1) <= cl.cols())
+					{
+						q_des << robot->_q;
+						state = POSITION_HOLD; // stay at BASE_DROP state after finishing
+					}
+					else
+					{
+						state = HOME; // stay at BASE_DROP state after finishing
+					}
+
+				}
 			}
 		}
 
-		else if(state == B_SIDE_BASE_NAV){ 
+		else if(state == B_SIDE_BASE_NAV){
 			// Set desired task position
 			q_des << initial_q;
-			q_des(0) = -0.15;
-			q_des(1) = 1.65;
-			q_des(2) = 0.0;
+			//q_des(0) = -0.15;
+			//q_des(1) = 1.65;
+			//q_des(2) = 0.0;
+			q_des(0) = cl.coeff(0,cc) - base_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) + base_front_offset*cos(cl.coeff(2,cc) + M_PI);
+			q_des(1) = cl.coeff(1,cc) - base_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) + base_front_offset*sin(cl.coeff(2,cc) + M_PI);
+			q_des(2) = cl.coeff(2,cc) - M_PI/2.;
 
 			// Set desired orientation
 			ori_des.setIdentity();
@@ -329,105 +418,122 @@ int main() {
 
 		else if(state == B_SIDE_ELEV){ //
 			// Set new position for opposite side of hole (i.e. add wall thickness)
-			x_des << -0.25, 2.2, 2.3; 
+			// x_des << -0.25, 2.2, 2.3;
+			x_des(0) = cl.coeff(0,cc) - tool_midpoint_offset*cos(cl.coeff(2,cc) - M_PI/2.);
+			x_des(1) = cl.coeff(1,cc) - tool_midpoint_offset*sin(cl.coeff(2,cc) - M_PI/2.);
+			x_des(2) = bottom_hole_height;
+
 			// Set desired orientation
 			ori_des = (AngleAxisd(0, Vector3d::UnitX())
 					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
-                joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
-                
-                // Advanced to the correct state depending if you are on your way up or down
-                if(elev_counter == 0){
-                	state = B_SIDE_BOTTOM;
-                	elev_counter = 1;
-                }
-                else{
-                	state = BASE_DROP;
-                	elev_counter = 0;
-                }
-                
+				joint_task->reInitializeTask();
+				posori_task->reInitializeTask();
+
+				// Advanced to the correct state depending if you are on your way up or down
+				if(elev_counter == 0){
+					state = B_SIDE_BOTTOM;
+					elev_counter = 1;
+				}
+				else{
+					state = BASE_DROP;
+					elev_counter = 0;
+				}
+
 			}
 		}
 
 		else if(state == B_SIDE_BOTTOM){
-			x_des << -0.03, 2.2, 2.3;
+			// x_des << -0.03, 2.2, 2.3;
+			x_des(0) = cl.coeff(0,cc) - hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.);
+			x_des(1) = cl.coeff(1,cc) - hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.);
+			x_des(2) = bottom_hole_height;
 			ori_des = (AngleAxisd(0, Vector3d::UnitX())
 					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
+				posori_task->reInitializeTask();
 
 				// Advanced to the correct state depending if you are going into or pulling out of hole
-                if(pull_counter == 0){
-                	state = B_SIDE_BOTTOM_THRU; // arrived to hole surface and proceeding to go in
-                	pull_counter = 1;
-                }
-                else{
-                	state = B_SIDE_TOP; // just exited hole and moving to next hole
-                	pull_counter = 0;
-                } 
+				if(pull_counter == 0){
+					state = B_SIDE_BOTTOM_THRU; // arrived to hole surface and proceeding to go in
+					pull_counter = 1;
+				}
+				else{
+					state = B_SIDE_TOP; // just exited hole and moving to next hole
+					pull_counter = 0;
+				}
 			}
 
 		}
 
 		else if(state == B_SIDE_BOTTOM_THRU){
-			x_des << -0.03, 2.26, 2.3; 
+			// x_des << -0.03, 2.26, 2.3;
+			x_des(0) = cl.coeff(0,cc) - hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
+			x_des(1) = cl.coeff(1,cc) - hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
+			x_des(2) = bottom_hole_height;
 			ori_des = (AngleAxisd(0, Vector3d::UnitX())
 					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
+				posori_task->reInitializeTask();
 
-                state = B_SIDE_BOTTOM; // advance to next state
+				state = B_SIDE_BOTTOM; // advance to next state
 			}
 		}
 
 		else if(state == B_SIDE_TOP){
-			x_des << -0.03, 2.2, 2.56;
+			// x_des << -0.03, 2.2, 2.56;
+			x_des(0) = cl.coeff(0,cc) - 0.06*cos(cl.coeff(2,cc) - M_PI/2.);
+			x_des(1) = cl.coeff(1,cc) - 0.06*sin(cl.coeff(2,cc) - M_PI/2.);
+			x_des(2) = top_hole_height;
 			ori_des = (AngleAxisd(0, Vector3d::UnitX())
 					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
+				posori_task->reInitializeTask();
 
 				// Advanced to the correct state depending if you are going into or pulling out of hole
-                if(pull_counter == 0){
-                	state = B_SIDE_TOP_THRU; // arrived to hole surface and proceeding to go in
-                	pull_counter = 1;
-                }
-                else{
-                	state = B_SIDE_ELEV; // just exited hole and moving to descend
-                	pull_counter = 0;
-                } 
+				if(pull_counter == 0){
+					state = B_SIDE_TOP_THRU; // arrived to hole surface and proceeding to go in
+					pull_counter = 1;
+				}
+				else{
+					state = B_SIDE_ELEV; // just exited hole and moving to descend
+					pull_counter = 0;
+				}
 			}
 		}
 
 
 		else if(state == B_SIDE_TOP_THRU){
-			x_des << -0.03, 2.26, 2.56; 
+			// x_des << -0.03, 2.26, 2.56;
+			x_des(0) = cl.coeff(0,cc) - hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
+			x_des(1) = cl.coeff(1,cc) - hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
+			x_des(2) = top_hole_height;
 			ori_des = (AngleAxisd(0, Vector3d::UnitX())
 					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
 					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
-                joint_task->reInitializeTask();
-                posori_task->reInitializeTask();
+				joint_task->reInitializeTask();
+				posori_task->reInitializeTask();
 
-                state = B_SIDE_TOP; // advance to next state
+				state = B_SIDE_TOP; // advance to next state
 			}
 		}
 
 
-		if(state == A_SIDE_BASE_NAV || state == B_SIDE_BASE_NAV || state == BASE_DROP){
+		if(state == A_SIDE_BASE_NAV || state == B_SIDE_BASE_NAV || state == BASE_DROP
+			|| state == HOME || state == POSITION_HOLD){
 			/*** PRIMARY JOINT CONTROL***/
 
 			joint_task->_desired_position = q_des;
