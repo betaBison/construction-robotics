@@ -147,10 +147,10 @@ int main() {
 	double start_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
-	MatrixXd cl = MatrixXd::Zero(3,2); // column locations
-	cl.row(0) << 0.035 , -2.465; // x location of column
-	cl.row(1) << 2.20 , 2.20; // y location of column
-	cl.row(2) << M_PI/2. , M_PI/2.; // direction of holes
+	MatrixXd cl = MatrixXd::Zero(3,6); // column locations
+	cl.row(0) << 0.035 , -2.465, -4.965, -4.965, -2.465,  0.035; // x location of column
+	cl.row(1) << 2.20 , 2.20, 2.20, -2.50, -2.50, -2.50  ; // y location of column
+	cl.row(2) << M_PI/2. , M_PI/2., M_PI/2., -M_PI/2. , -M_PI/2., -M_PI/2.; // direction of holes
 
 	int cc = 0; // current column
 
@@ -208,7 +208,7 @@ int main() {
 			q_des(10) = initial_q(10);
 
 			// Set desired orientation
-			cout << '\n' << "run 'set continue 1' to move on to column "<< cc+1 << "\n";
+			cout << '\n' << "in a new terminal run 'redis-cli' then 'set continue 1' to move on to column "<< cc+1 << "\n";
 			int continue_result = 0;
 			continue_result = stoi(redis_client.get(CONTINUE_KEY));
 
