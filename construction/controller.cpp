@@ -147,12 +147,26 @@ int main() {
 	double start_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
+	// trajectory points
 	MatrixXd cl = MatrixXd::Zero(3,6); // column locations
 	cl.row(0) << 0.035 , -2.465, -4.965, -4.965, -2.465,  0.035; // x location of column
 	cl.row(1) << 2.20 , 2.20, 2.20, -2.50, -2.50, -2.50  ; // y location of column
 	cl.row(2) << M_PI/2. , M_PI/2., M_PI/2., -M_PI/2. , -M_PI/2., -M_PI/2.; // direction of holes
 
 	int cc = 0; // current column
+
+	// trajectory orientations
+	MatrixXd right_ori = MatrixXd::Zero(3,6);
+	MatrixXd left_ori = MatrixXd::Zero(3,6);
+
+	right_ori.row(0) << M_PI, M_PI, M_PI, 0.0, 0.0, 0.0;
+	right_ori.row(1) << -0.5*M_PI, -0.5*M_PI, -0.5*M_PI, 0.5*M_PI, 0.5*M_PI, 0.5*M_PI;
+	right_ori.row(2) << M_PI, M_PI, M_PI, M_PI, M_PI, M_PI;
+
+	left_ori.row(0) << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+	left_ori.row(1) << 0.5*M_PI, 0.5*M_PI, 0.5*M_PI, -0.5*M_PI, -0.5*M_PI, -0.5*M_PI;
+	left_ori.row(2) << 0.0, 0.0, 0.0, M_PI, M_PI, M_PI;	
+
 
 	// building column parameters
 	float base_front_offset = 0.55;
@@ -251,9 +265,9 @@ int main() {
 			x_des(1) = cl.coeff(1,cc) + tool_midpoint_offset*sin(cl.coeff(2,cc) - M_PI/2.);
 			x_des(2) = bottom_hole_height;
 			// Set desired orientation
-			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
-					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
+			ori_des = (AngleAxisd(right_ori.coeff(0,cc), Vector3d::UnitX())
+					 * AngleAxisd(right_ori.coeff(1,cc),  Vector3d::UnitY())
+					 * AngleAxisd(right_ori.coeff(2,cc), Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
@@ -278,10 +292,7 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) + hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.);
 			x_des(1) = cl.coeff(1,cc) + hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.);
 			x_des(2) = bottom_hole_height;
-			// Set desired orientation
-			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
-					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){ //position of tool tip
 				joint_task->reInitializeTask();
@@ -305,10 +316,7 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) + hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
 			x_des(1) = cl.coeff(1,cc) + hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
 			x_des(2) = bottom_hole_height;
-			// Set desired orientation
-			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
-					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
@@ -323,9 +331,7 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) + 0.06*cos(cl.coeff(2,cc) - M_PI/2.);
 			x_des(1) = cl.coeff(1,cc) + 0.06*sin(cl.coeff(2,cc) - M_PI/2.);
 			x_des(2) = top_hole_height;
-			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
-					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
@@ -348,9 +354,8 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) + hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
 			x_des(1) = cl.coeff(1,cc) + hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
 			x_des(2) = top_hole_height;
-			ori_des = (AngleAxisd(M_PI, Vector3d::UnitX())
-					 * AngleAxisd(-0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(M_PI, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
+
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
 				posori_task->reInitializeTask();
@@ -424,9 +429,9 @@ int main() {
 			x_des(2) = bottom_hole_height;
 
 			// Set desired orientation
-			ori_des = (AngleAxisd(0, Vector3d::UnitX())
-					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			ori_des = (AngleAxisd(left_ori.coeff(0,cc), Vector3d::UnitX())
+					 * AngleAxisd(left_ori.coeff(1,cc),  Vector3d::UnitY())
+					 * AngleAxisd(left_ori.coeff(2,cc), Vector3d::UnitZ())).toRotationMatrix();
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
@@ -450,9 +455,7 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) - hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.);
 			x_des(1) = cl.coeff(1,cc) - hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.);
 			x_des(2) = bottom_hole_height;
-			ori_des = (AngleAxisd(0, Vector3d::UnitX())
-					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
@@ -476,9 +479,7 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) - hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
 			x_des(1) = cl.coeff(1,cc) - hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
 			x_des(2) = bottom_hole_height;
-			ori_des = (AngleAxisd(0, Vector3d::UnitX())
-					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
@@ -493,9 +494,7 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) - 0.06*cos(cl.coeff(2,cc) - M_PI/2.);
 			x_des(1) = cl.coeff(1,cc) - 0.06*sin(cl.coeff(2,cc) - M_PI/2.);
 			x_des(2) = top_hole_height;
-			ori_des = (AngleAxisd(0, Vector3d::UnitX())
-					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
@@ -519,9 +518,7 @@ int main() {
 			x_des(0) = cl.coeff(0,cc) - hole_side_offset*cos(cl.coeff(2,cc) - M_PI/2.) - drill_depth*cos(cl.coeff(2,cc) + M_PI);
 			x_des(1) = cl.coeff(1,cc) - hole_side_offset*sin(cl.coeff(2,cc) - M_PI/2.) - drill_depth*sin(cl.coeff(2,cc) + M_PI);;
 			x_des(2) = top_hole_height;
-			ori_des = (AngleAxisd(0, Vector3d::UnitX())
-					 * AngleAxisd(0.5*M_PI,  Vector3d::UnitY())
-					 * AngleAxisd(0, Vector3d::UnitZ())).toRotationMatrix();
+			// Desired orientation same as before
 
 			if ((posori_task->_current_position - x_des).norm() < tolerance){
 				joint_task->reInitializeTask();
