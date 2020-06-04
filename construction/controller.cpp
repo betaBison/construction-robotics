@@ -365,7 +365,7 @@ int main() {
 		}
 
 		else if(state == BASE_DROP){
-			q_des << robot->_q; // set desired joint
+			//q_des << robot->_q; // set desired joint
 			q_des(3) = 0.7;
 			// Set desired orientation
 			ori_des.setIdentity();
@@ -398,7 +398,7 @@ int main() {
 
 		else if(state == B_SIDE_BASE_NAV){
 			// Set desired task position
-			q_des << initial_q;
+			//q_des << initial_q;
 			//q_des(0) = -0.15;
 			//q_des(1) = 1.65;
 			//q_des(2) = 0.0;
