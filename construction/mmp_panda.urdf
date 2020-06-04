@@ -194,17 +194,15 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../model/Drill2/Drill2.obj"/>
+        <!--mesh filename="../../../model/Drill2/Drill2.obj"/>-->
+        <mesh filename="../../../model/Drill_NoBolt/drill_nobolt.obj"/>
       </geometry>
     </visual>
-  <collision>
-      <!-- geometry>
-        <mesh filename="../../../model/Drill2/Drill2.obj"/>
-      </geometry>-->
+    <!--collision>
       <geometry>
-        <cylinder radius="0.104" length="0.203"/>
-      </geometry> 
-    </collision>
+        <mesh filename="../../../model/Drill2/Drill2.obj"/>
+      </geometry>
+    </collision>-->
   </link>
 
 
