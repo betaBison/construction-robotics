@@ -194,8 +194,8 @@
     </inertial>
     <visual>
       <geometry>
-        <!--mesh filename="../../../model/Drill2/Drill2.obj"/>-->
-        <mesh filename="../../../model/Drill_NoBolt/drill_nobolt.obj"/>
+        <mesh filename="../../../model/Drill2/Drill2.obj"/>
+        <!--mesh filename="../../../model/Drill_NoBolt/drill_nobolt.obj"/>-->
       </geometry>
     </visual>
     <!--collision>
