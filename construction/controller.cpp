@@ -165,7 +165,7 @@ int main() {
 
 	left_ori.row(0) << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 	left_ori.row(1) << 0.5*M_PI, 0.5*M_PI, 0.5*M_PI, -0.5*M_PI, -0.5*M_PI, -0.5*M_PI;
-	left_ori.row(2) << 0.0, 0.0, 0.0, M_PI, M_PI, M_PI;	
+	left_ori.row(2) << 0.0, 0.0, 0.0, M_PI, M_PI, M_PI;
 
 
 	// building column parameters
@@ -177,7 +177,7 @@ int main() {
 	float bottom_hole_height = 2.3;
 	float top_hole_height = 2.56;
 	float hole_side_offset = 0.06;
-	float drill_depth = 0.06;
+	float drill_depth = 0.05;
 
 	while (runloop) {
 		// wait for next scheduled loop
