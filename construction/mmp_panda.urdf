@@ -194,8 +194,8 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="../../../model/Drill2/Drill2.obj"/>
-        <!--mesh filename="../../../model/Drill_NoBolt/drill_nobolt.obj"/>-->
+        <!-- <mesh filename="../../../model/Drill2_Full_Bolt/Drill2_Full_Bolt.obj"/> -->
+        <mesh filename="../../../model/Drill_NoBolt/drill_nobolt.obj"/>
       </geometry>
     </visual>
     <!--collision>
@@ -229,7 +229,7 @@
     <origin xyz = "0 0 0.0" rpy = "0 0 0"/>
     <parent link = "base_y" />
     <child link= "base_theta"/>
-    <axis xyz = "0 0 1" />git c
+    <axis xyz = "0 0 1" />
     <calibration falling="0.0" />
     <limit effort="87" lower="-2.8973" upper="2.8973" velocity="2.1750" />
   </joint>

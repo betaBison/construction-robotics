@@ -20,7 +20,7 @@
             <geometry>
                 <mesh filename="./resources/../../../model/mmp_panda_2" scale="1.0 1.0 1.0"/>
             </geometry>
-        </visual>        
+        </visual>
     </static_object> -->
 
     <!-- YZ_steel -->
@@ -93,7 +93,7 @@
         </visual>
     </static_object>
 
-    <static_object name="Column">
+    <!-- <static_object name="Column">
         <origin xyz="0.0 0 0" rpy="0 0 0" />
         <collision>
             <origin xyz="0.035 2.4 0" rpy="0 0 0" />
@@ -109,7 +109,7 @@
             <material name="material_red">
                 <color rgba="0.5 0.1 0.1 1.0" />
             </material>
-        </visual> 
+        </visual>
     </static_object>
 
     <static_object name="Beam">
@@ -128,6 +128,259 @@
             <material name="material_red">
                 <color rgba="0.5 0.1 0.1 1.0" />
             </material>
+        </visual>
+    </static_object> -->
+
+
+    <!-- bolts for column 1 -->
+    <static_object name = "bolt_1RB">
+        <origin xyz="0.097 2.204 2.1476" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_1RT">
+        <origin xyz="0.097 2.204 2.4076" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_1LB">
+        <origin xyz="-0.03 2.204 2.1476" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_1LT">
+        <origin xyz="-0.03 2.204 2.4076" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <!-- bolts for column 2 -->
+    <static_object name = "bolt_2RB">
+        <origin xyz="-2.403 2.204 2.1476" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_2RT">
+        <origin xyz="-2.403 2.204 2.4076" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_2LB">
+        <origin xyz="-2.53 2.204 2.1476" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_2LT">
+        <origin xyz="-2.53 2.204 2.4076" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+
+
+    <!-- bolts for column 3 -->
+    <static_object name = "bolt_3RB">
+        <origin xyz="-4.9037 2.204 2.1476" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_3RT">
+        <origin xyz="-4.9037 2.204 2.4076" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_3LB">
+        <origin xyz="-5.03 2.204 2.1476" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_3LT">
+        <origin xyz="-5.03 2.204 2.4076" rpy="1.57 0 0" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+
+
+    <!-- bolts for column 4 -->
+    <static_object name = "bolt_4RB">
+        <origin xyz="-5.03 -2.496 2.1476" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_4RT">
+        <origin xyz="-5.03 -2.496 2.4076" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_4LB">
+        <origin xyz="-4.903 -2.496 2.1476" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_4LT">
+        <origin xyz="-4.903 -2.496 2.4076" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <!-- bolts for column 5 -->
+    <static_object name = "bolt_5RB">
+        <origin xyz="-2.403 -2.496 2.1476" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_5RT">
+        <origin xyz="-2.403 -2.496 2.4076" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_5LB">
+        <origin xyz="-2.53 -2.496 2.1476" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_5LT">
+        <origin xyz="-2.53 -2.496 2.4076" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+
+
+    <!-- bolts for column 6 -->
+    <static_object name = "bolt_6RB">
+        <origin xyz="0.097 -2.496 2.1476" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_6RT">
+        <origin xyz="0.097 -2.496 2.4076" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_6LB">
+        <origin xyz="-0.03 -2.496 2.1476" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
+        </visual>
+    </static_object>
+
+    <static_object name = "bolt_6LT">
+        <origin xyz="-0.03 -2.496 2.4076" rpy="1.57 0 3.14" />
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="./resources/../../../model/bolt/meshes/visual/bolt.obj" scale="1.0 1.0 1.0"/>
+            </geometry>
         </visual>
     </static_object>
 
