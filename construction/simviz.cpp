@@ -57,6 +57,7 @@ bool fTransYp = false;
 bool fTransYn = false;
 bool fTransZp = false;
 bool fTransZn = false;
+bool fRotCircle = false;
 bool fRotPanTilt = false;
 bool fRobotLinkSelect = false;
 
@@ -114,7 +115,7 @@ int main() {
 
 	// create window and make it current
 	glfwWindowHint(GLFW_VISIBLE, 0);
-	GLFWwindow* window = glfwCreateWindow(windowW, windowH, "SAI2.0 - PandaApplications", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(windowW, windowH, "SAI2.0 - Construction Robotics", NULL, NULL);
 	glfwSetWindowPos(window, windowPosX, windowPosY);
 	glfwShowWindow(window);
 	glfwMakeContextCurrent(window);
@@ -192,12 +193,26 @@ int main() {
 			camera_lookat = camera_lookat - 0.05*cam_up_axis;
 		}
 		if (fTransZp) {
-			camera_pos = camera_pos + 0.1*cam_depth_axis;
-			camera_lookat = camera_lookat + 0.1*cam_depth_axis;
+			camera_pos = camera_pos + 0.01*cam_depth_axis;
+			camera_lookat = camera_lookat + 0.01*cam_depth_axis;
 		}
 		if (fTransZn) {
-			camera_pos = camera_pos - 0.1*cam_depth_axis;
-			camera_lookat = camera_lookat - 0.1*cam_depth_axis;
+			camera_pos = camera_pos - 0.01*cam_depth_axis;
+			camera_lookat = camera_lookat - 0.01*cam_depth_axis;
+		}
+		if (fRotCircle) {
+			float diff_x = camera_pos(0) - robot->_q(0);
+			float diff_y = camera_pos(1) - robot->_q(1);
+			float r = sqrt(pow(diff_x,2) + pow(diff_y,2));
+			float theta = atan2(diff_y, diff_x);
+			theta += 0.01;
+			// rotate the angle slightly
+			camera_pos(0) = robot->_q(0) + r*cos(theta);
+			camera_pos(1) = robot->_q(1) + r*sin(theta);
+			// always point at robot
+			camera_lookat(0) = robot->_q(0);
+			camera_lookat(1) = robot->_q(1);
+			camera_lookat(2) = robot->_q(3);
 		}
 		if (fRotPanTilt) {
 			// get current cursor position
@@ -372,6 +387,9 @@ void keySelect(GLFWwindow* window, int key, int scancode, int action, int mods)
 			break;
 		case GLFW_KEY_Z:
 			fTransZn = set;
+			break;
+		case GLFW_KEY_R:
+			fRotCircle = set;
 			break;
 		default:
 			break;
