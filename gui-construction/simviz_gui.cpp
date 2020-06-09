@@ -6,6 +6,7 @@
 #include <dynamics3d.h>
 #include "redis/RedisClient.h"
 #include "timer/LoopTimer.h"
+#include "Sai2Primitives.h"
 
 #include <GLFW/glfw3.h> //must be loaded after loading opengl/glew as part of graphicsinterface
 #include "uiforce/UIForceWidget.h"
@@ -62,6 +63,7 @@ bool fTransYp = false;
 bool fTransYn = false;
 bool fTransZp = false;
 bool fTransZn = false;
+bool fRotCircle = false;
 bool fRotPanTilt = false;
 bool fRobotLinkSelect = false;
 
@@ -105,12 +107,24 @@ int main(int argc, char **argv)
 	auto ui_force_widget = new UIForceWidget(robot_name, robot, graphics);
 	ui_force_widget->setEnable(false);
 
-    // initialize glew
+	// initialize glew
 	glewInitialize();
 
 	// start the simulation thread first
 	fSimulationRunning = true;
 	std::thread sim_thread(simulation, robot, sim, ui_force_widget);
+
+
+	const string control_link = "linkTool";
+	const Vector3d control_point = Vector3d(0,0.104,0.203);
+	auto posori_task = new Sai2Primitives::PosOriTask(robot, control_link, control_point);
+
+	#ifdef USING_OTG
+		posori_task->_use_interpolation_flag = true;
+	#else
+		posori_task->_use_velocity_saturation_flag = true;
+	#endif
+
 
 	// while window is open:
 	while (!glfwWindowShouldClose(window) && fSimulationRunning)
@@ -170,6 +184,38 @@ int main(int argc, char **argv)
 		{
 			camera_pos = camera_pos - 0.1 * cam_depth_axis;
 			camera_lookat = camera_lookat - 0.1 * cam_depth_axis;
+		}
+		if (fRotCircle) {
+			// look at the robot base
+			float diff_x = camera_pos(0) - robot->_q(0);
+			float diff_y = camera_pos(1) - robot->_q(1);
+			float r = sqrt(pow(diff_x,2) + pow(diff_y,2));
+			float theta = atan2(diff_y, diff_x);
+			theta -= 0.01;
+			// rotate the angle slightly
+			camera_pos(0) = robot->_q(0) + r*cos(theta);
+			camera_pos(1) = robot->_q(1) + r*sin(theta);
+
+			camera_lookat(0) = robot->_q(0);
+			camera_lookat(1) = robot->_q(1);
+			camera_lookat(2) = robot->_q(3);
+
+
+			// look at end effector
+			// sim->getJointPositions(robot_name, robot->_q);
+			// float diff_x = camera_pos(0) - posori_task->_current_position(0);
+			// float diff_y = camera_pos(1) - posori_task->_current_position(1);
+			// float r = sqrt(pow(diff_x,2) + pow(diff_y,2));
+			// float theta = atan2(diff_y, diff_x);
+			// theta -= 0.01;
+			// // rotate the angle slightly
+			// camera_pos(0) = posori_task->_current_position(0) + r*cos(theta);
+			// camera_pos(1) = posori_task->_current_position(1) + r*sin(theta);
+
+
+			camera_lookat = posori_task->_current_position;
+			//cout << "pose: " << camera_pos << "\n look: " << camera_lookat << "\n\n\n";
+
 		}
 		if (fRotPanTilt)
 		{
@@ -244,7 +290,7 @@ void simulation(Sai2Model::Sai2Model *robot, Simulation::Sai2Simulation *sim, UI
 	double last_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
-    // init variables
+	// init variables
 	VectorXd g(dof);
 
 	Eigen::Vector3d ui_force;
@@ -268,8 +314,8 @@ void simulation(Sai2Model::Sai2Model *robot, Simulation::Sai2Simulation *sim, UI
 		if (fRobotLinkSelect)
 			sim->setJointTorques(robot_name, command_torques + ui_force_command_torques);
 		else
-            // get gravity torques
-            robot->gravityVector(g);
+			// get gravity torques
+			robot->gravityVector(g);
 			sim->setJointTorques(robot_name, command_torques + g);
 
 		// integrate forward
@@ -376,6 +422,9 @@ void keySelect(GLFWwindow *window, int key, int scancode, int action, int mods)
 		break;
 	case GLFW_KEY_Z:
 		fTransZn = set;
+		break;
+	case GLFW_KEY_R:
+		fRotCircle = set;
 		break;
 	default:
 		break;

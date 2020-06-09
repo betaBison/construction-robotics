@@ -193,19 +193,19 @@ int main() {
 			camera_lookat = camera_lookat - 0.05*cam_up_axis;
 		}
 		if (fTransZp) {
-			camera_pos = camera_pos + 0.01*cam_depth_axis;
-			camera_lookat = camera_lookat + 0.01*cam_depth_axis;
+			camera_pos = camera_pos + 0.1*cam_depth_axis;
+			camera_lookat = camera_lookat + 0.1*cam_depth_axis;
 		}
 		if (fTransZn) {
-			camera_pos = camera_pos - 0.01*cam_depth_axis;
-			camera_lookat = camera_lookat - 0.01*cam_depth_axis;
+			camera_pos = camera_pos - 0.1*cam_depth_axis;
+			camera_lookat = camera_lookat - 0.1*cam_depth_axis;
 		}
 		if (fRotCircle) {
 			float diff_x = camera_pos(0) - robot->_q(0);
 			float diff_y = camera_pos(1) - robot->_q(1);
 			float r = sqrt(pow(diff_x,2) + pow(diff_y,2));
 			float theta = atan2(diff_y, diff_x);
-			theta += 0.01;
+			theta -= 0.01;
 			// rotate the angle slightly
 			camera_pos(0) = robot->_q(0) + r*cos(theta);
 			camera_pos(1) = robot->_q(1) + r*sin(theta);
@@ -213,6 +213,7 @@ int main() {
 			camera_lookat(0) = robot->_q(0);
 			camera_lookat(1) = robot->_q(1);
 			camera_lookat(2) = robot->_q(3);
+
 		}
 		if (fRotPanTilt) {
 			// get current cursor position
@@ -227,6 +228,7 @@ int main() {
 			Eigen::Matrix3d m_pan; m_pan = Eigen::AngleAxisd(compass, -cam_up_axis);
 			camera_pos = camera_lookat + m_pan*(camera_pos - camera_lookat);
 		}
+		//cout << "pose: " << camera_pos << "\n look: " << camera_lookat << "\n\n\n";
 		graphics->setCameraPose(camera_name, camera_pos, cam_up_axis, camera_lookat);
 		glfwGetCursorPos(window, &last_cursorx, &last_cursory);
 
