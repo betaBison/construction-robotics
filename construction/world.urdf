@@ -8,10 +8,10 @@
         <origin xyz="0.0 0.0 -0.1524" rpy="0 0 0" />
 	</robot>
 
-    <robot name="mmp_panda_2">
+    <!-- <robot name="mmp_panda_2">
         <model dir="./resources" path="mmp_panda.urdf" name="mmp_panda" />
         <origin xyz="-6.5 -2.1 -0.1524" rpy="0 0 0" />
-    </robot>
+    </robot> -->
 
     <!-- <static_object name="mmp_panda_2">
         <origin xyz="0.0 0.0 0" rpy="0 0 0" />
@@ -417,6 +417,10 @@
 		<position xyz="2.0 -1.2 1.0" />
 		<vertical xyz="0.0 0.0 1.0" />
 		<lookat xyz="0.0 2.5 0.3" />
+        <!-- close-up view -->
+        <!-- <position xyz="1.0918 1.82915 2.66828" />
+        <vertical xyz="0.0 0.0 1.0" />
+        <lookat xyz="0.19739 2.10117 2.31328" /> -->
 	</camera>
 
 	<!--<camera name="camera">
