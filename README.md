@@ -1,7 +1,8 @@
 # construction-robotics
 
-sai2-examples depends on [sai2-interfaces](https://github.com/manips-sai-org/sai2-interfaces).
-Clone it and ensure that its definitions are exported.
+This repository was built from templates found in [sai2-examples](https://github.com/manips-sai-org/sai2-examples)
+
+construction-robotics depends on [sai2-interfaces](https://github.com/manips-sai-org/sai2-interfaces), chai3d, sai2-common, sai2-graphics, sai2-model, sai2-primitives, sai2-simulation, and sai2-urdfreader.
 
 To build the examples:
 ```
@@ -12,9 +13,14 @@ make
 
 Binaries will placed in the `bin/` folder.
 
-To fully start this example, you can use the launch script provided:
+To fully start the bolting demo, you can use the launch script provided:
 ```
+cd bin/construction
 ./launch.sh
 ```
-
-After that's all done, navigate to `localhost:8000` to interact with the example.
+To fully start the gui, you can use the launch script provided:
+```
+cd bin/gui-construction
+./launch_gui.sh
+```
+After that's all done, navigate to `localhost:8000` to interact with the gui.
