@@ -4,6 +4,8 @@ This repository was built from templates found in [sai2-examples](https://github
 
 construction-robotics depends on [sai2-interfaces](https://github.com/manips-sai-org/sai2-interfaces), chai3d, sai2-common, sai2-graphics, sai2-model, sai2-primitives, sai2-simulation, and sai2-urdfreader.
 
+![environment](docs/environment.png)
+
 To build the examples:
 ```
 mkdir build && cd build
